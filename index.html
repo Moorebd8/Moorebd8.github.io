@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght=400;700;800&family=Zen+Maru+Gothic:wght=500;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght=400;700;800&family=Zen+Maru+Gothic:wght=500;700&display=swap"
+        rel="stylesheet">
+
     <script>
         tailwind.config = {
             theme: {
@@ -51,17 +54,26 @@
             background-color: #FDF9EE;
             color: #4A3B32;
         }
+
         /* ふわふわ浮くアニメーションをTailwindのクラスとして使用 */
-        .float-slow { animation-duration: 6s; }
-        .float-medium { animation-duration: 5s; }
-        .float-fast { animation-duration: 4s; }
-        
+        .float-slow {
+            animation-duration: 6s;
+        }
+
+        .float-medium {
+            animation-duration: 5s;
+        }
+
+        .float-fast {
+            animation-duration: 4s;
+        }
+
         /* 吹き出しタグのスタイル */
         .tag-label {
             background: white;
             padding: 8px 16px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             font-weight: bold;
             font-size: 0.9rem;
             display: flex;
@@ -70,26 +82,214 @@
             z-index: 20;
             white-space: nowrap;
         }
-        
+
         /* グラデーションボタン */
         .btn-gradient {
             background: linear-gradient(135deg, #E88B86 0%, #E8A87C 100%);
             transition: all 0.3s ease;
         }
+
         .btn-gradient:hover {
             transform: scale(1.05);
             box-shadow: 0 10px 25px rgba(232, 139, 134, 0.4);
         }
-        
+
         /* 削減率ハイライト */
         .reduction-highlight {
-            font-size: 1.2em; /* 周囲より大きく */
-            background: linear-gradient(45deg, #10B981, #34D399); /* successカラーのグラデーション */
+            font-size: 1.2em;
+            /* 周囲より大きく */
+            background: linear-gradient(45deg, #10B981, #34D399);
+            /* successカラーのグラデーション */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
+        /* --- News Section Styles (Adapted) --- */
+        :root {
+            --news-color-primary: #E88B86;
+            /* Site Primary (Pink) */
+            --news-color-secondary: #F3C583;
+            /* Site Accent (Orange) */
+            --news-color-background: #FDF9EE;
+            /* Site Bg */
+            --news-color-card-bg: #ffffff;
+            --news-color-text: #4A3B32;
+            /* Site Text */
+            --news-color-border: #e0e0e0;
+            --news-color-active-bg: #fff5f5;
+            /* Light Pink for active */
+        }
+
+        /* News Section Container */
+        .news-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            /* Centered by section padding */
+            background-color: var(--news-color-card-bg);
+            padding: 30px 20px 50px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .news-section h2 {
+            font-family: "Zen Maru Gothic", sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--news-color-text);
+            margin-bottom: 40px;
+        }
+
+        .news-list-wrapper {
+            max-height: 350px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin-bottom: 40px;
+            padding: 0 10px;
+        }
+
+        .news-item {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            padding: 15px 10px;
+            border-bottom: 1px solid var(--news-color-border);
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.6;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            color: var(--news-color-text);
+            text-decoration: none;
+            margin: 0 -10px;
+        }
+
+        .news-item:hover {
+            background-color: #f9f9f9;
+            transform: translateY(-1px);
+        }
+
+        .news-item:active {
+            background-color: var(--news-color-active-bg);
+            transform: scale(0.99);
+        }
+
+        .news-list-wrapper .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .news-date {
+            flex-shrink: 0;
+            width: 100px;
+            color: #888;
+            margin-right: 15px;
+            font-weight: 500;
+            font-family: "Inter", sans-serif;
+        }
+
+        .news-tag {
+            flex-shrink: 0;
+            display: inline-block;
+            padding: 4px 10px;
+            margin-right: 15px;
+            font-size: 11px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+
+        /* Tags */
+        .tag-release {
+            color: #E88B86;
+            background-color: #FFF0EB;
+            border: 1px solid #E88B86;
+        }
+
+        .tag-info {
+            color: #4A3B32;
+            background-color: #f0f0f0;
+            border: 1px solid #dcdcdc;
+        }
+
+        .news-text {
+            flex-grow: 1;
+            color: var(--news-color-text);
+            min-width: 0;
+            padding-right: 5px;
+        }
+
+        .view-all-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 40px;
+            background-color: var(--news-color-primary);
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(232, 139, 134, 0.4);
+            letter-spacing: 0.5px;
+        }
+
+        .view-all-button:hover {
+            background-color: #E8A87C;
+            box-shadow: 0 6px 20px rgba(232, 139, 134, 0.5);
+        }
+
+        .view-all-button::after {
+            content: '›';
+            margin-left: 10px;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        @media (max-width: 600px) {
+            .news-section {
+                padding: 20px 10px 40px;
+                border-radius: 12px;
+            }
+
+            .news-section h2 {
+                font-size: 26px;
+            }
+
+            .news-item {
+                display: block;
+                padding: 12px 0;
+                margin: 0;
+            }
+
+            .news-date {
+                display: inline-block;
+                width: auto;
+                margin-right: 10px;
+                margin-bottom: 5px;
+                font-size: 13px;
+            }
+
+            .news-tag {
+                margin-right: 10px;
+                margin-bottom: 8px;
+            }
+
+            .news-text {
+                display: block;
+                padding-right: 0;
+            }
+
+            .view-all-button {
+                padding: 14px 30px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+        }
     </style>
 </head>
+
 <body class="antialiased overflow-x-hidden font-sans">
 
     <header class="w-full py-6 px-4 md:px-8 flex justify-between items-center max-w-7xl mx-auto">
@@ -97,9 +297,13 @@
             Fast Plot（経過表エディタ(仮)）
         </div>
         <nav class="hidden md:flex gap-8 font-bold text-sm items-center">
-            <a href="#" class="hover:text-primary transition">機能について</a>
-            <a href="#" class="hover:text-primary transition">使い方</a>
-            <a href="https://script.google.com/macros/s/AKfycbzXolDQJMQAIaFar1o0hMtjolkb2JXDaDcuMIRnNSw9v7HIXT7BCe9npI8Yz3F5VUUH/exec" target="_blank" class="border-2 border-text px-6 py-2 rounded-full hover:bg-text hover:text-bg transition">
+            <a href="#features" class="hover:text-primary transition">機能について</a>
+            <a href="#how-to-use" class="hover:text-primary transition">使い方</a>
+            <a href="https://forms.gle/nteFfsvLZrLDEpsJ6" target="_blank"
+                class="hover:text-primary transition">問い合わせ</a>
+            <a href="https://script.google.com/macros/s/AKfycbwyUGJ4yp16b4TV-W92zUJeiKVM6RT2jsLjTXjqwm2bIOYI7uYiWeTMe1kFRJQYNg/exec"
+                target="_blank"
+                class="border-2 border-text px-6 py-2 rounded-full hover:bg-text hover:text-bg transition">
                 ログイン
             </a>
         </nav>
@@ -107,74 +311,134 @@
 
     <main class="relative pt-12 pb-24 px-4 md:pt-20 overflow-hidden">
         <div class="max-w-6xl mx-auto text-center relative z-10">
-            
+
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold mb-6 leading-tight text-text">
-                統計結果をコピペするだけ。<br>
+                コピペするだけ。<br>
                 学会スライド作成時間を、<br>
                 <span class="reduction-highlight font-extrabold">劇的に80%削減。</span>
             </h1>
-            
+
             <p class="text-lg md:text-2xl mb-10 text-gray-700 max-w-3xl mx-auto leading-relaxed font-bold">
                 もう、複雑な経過表作成で徹夜する必要はありません。<br class="hidden md:inline">
                 あなたの貴重な時間を、無駄にしない。快適な経過表作成を支援。
             </p>
 
             <div class="mb-16">
-                <a href="https://script.google.com/macros/s/AKfycbzXolDQJMQAIaFar1o0hMtjolkb2JXDaDcuMIRnNSw9v7HIXT7BCe9npI8Yz3F5VUUH/exec" 
-                   class="btn-gradient inline-flex items-center justify-center text-white text-xl font-bold py-4 px-12 rounded-full shadow-xl relative overflow-hidden group">
+                <a href="https://script.google.com/macros/s/AKfycbwyUGJ4yp16b4TV-W92zUJeiKVM6RT2jsLjTXjqwm2bIOYI7uYiWeTMe1kFRJQYNg/exec"
+                    class="btn-gradient inline-flex items-center justify-center text-white text-xl font-bold py-4 px-12 rounded-full shadow-xl relative overflow-hidden group">
                     <span class="relative z-10">トライアルを始める</span>
-                    <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition duration-300"></div>
+                    <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition duration-300">
+                    </div>
                 </a>
-               
+
             </div>
 
             <div class="relative max-w-5xl mx-auto mt-8 h-[300px] md:h-[500px] lg:h-[600px]">
-                
-                <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl z-10 px-4">
+
+                <div
+                    class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl z-10 px-4">
                     <div class="relative group">
-                         <img src="https://placehold.co/1000x600/ffffff/dddddd?text=Keika-Hyo+Editor+UI+%7C+Auto+Graph+Generation" 
-                             alt="自動グラフ作成画面" 
-                             class="rounded-xl shadow-2xl border-4 border-white transform rotate-[-2deg] group-hover:rotate-0 transition duration-500 w-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none rounded-xl"></div>
+                        <img src="https://placehold.co/1000x600/ffffff/dddddd?text=Keika-Hyo+Editor+UI+%7C+Auto+Graph+Generation"
+                            alt="自動グラフ作成画面"
+                            class="rounded-xl shadow-2xl border-4 border-white transform rotate-[-2deg] group-hover:rotate-0 transition duration-500 w-full object-cover">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none rounded-xl">
+                        </div>
                     </div>
                 </div>
 
-                <div class="tag-label absolute top-[-10%] md:top-[0%] left-[5%] md:left-[10%] float-slow text-success border-2 border-success/50">
+                <div
+                    class="tag-label absolute top-[-10%] md:top-[0%] left-[5%] md:left-[10%] float-slow text-success border-2 border-success/50">
                     <span class="bg-success/20 p-2 rounded-full text-lg">⏱️</span> グラフ設定に**費やしていた5時間** → 15分
                 </div>
 
-                <div class="tag-label absolute bottom-[-5%] md:bottom-[10%] left-[2%] md:left-[5%] float-medium text-red-600">
+                <div
+                    class="tag-label absolute bottom-[-5%] md:bottom-[10%] left-[2%] md:left-[5%] float-medium text-red-600">
                     <span class="bg-red-100 p-2 rounded-full text-lg">🚫</span> 図表の**体裁崩れ**のストレス解消
                 </div>
 
-                <div class="tag-label absolute top-[0%] md:top-[10%] right-[5%] md:right-[15%] float-fast text-indigo-600">
+                <div
+                    class="tag-label absolute top-[0%] md:top-[10%] right-[5%] md:right-[15%] float-fast text-indigo-600">
                     <span class="bg-indigo-100 p-2 rounded-full text-lg">💡</span> データアップロードだけで自動生成
                 </div>
 
-                <div class="tag-label absolute bottom-[0%] md:bottom-[20%] right-[2%] md:right-[5%] float-slow text-pink-600">
+                <div
+                    class="tag-label absolute bottom-[0%] md:bottom-[20%] right-[2%] md:right-[5%] float-slow text-pink-600">
                     <span class="bg-pink-100 p-2 rounded-full text-lg">🏆</span> 査読対応の**高品質出力**
                 </div>
 
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 opacity-60 pointer-events-none">
-                    <div class="absolute top-0 left-10 w-48 h-48 md:w-72 md:h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-                    <div class="absolute top-0 right-10 w-48 h-48 md:w-72 md:h-72 bg-primary/30 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-                    <div class="absolute bottom-0 left-20 w-48 h-48 md:w-72 md:h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+                <div
+                    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 opacity-60 pointer-events-none">
+                    <div
+                        class="absolute top-0 left-10 w-48 h-48 md:w-72 md:h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob">
+                    </div>
+                    <div
+                        class="absolute top-0 right-10 w-48 h-48 md:w-72 md:h-72 bg-primary/30 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000">
+                    </div>
+                    <div
+                        class="absolute bottom-0 left-20 w-48 h-48 md:w-72 md:h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000">
+                    </div>
                 </div>
             </div>
         </div>
     </main>
-        <!-- Features Section -->
-    <section class="py-20 bg-white relative z-20">
+    <!-- News Section (Added) -->
+    <section id="news" class="py-20 relative z-2 relative">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="news-section">
+                <h2>お知らせ・更新情報</h2>
+
+                <div class="news-list-wrapper">
+                    <!-- Update History -->
+                    <a href="#" class="news-item">
+                        <span class="news-date">2025-12-13</span>
+                        <span class="news-tag tag-info">Update</span>
+                        <span class="news-text">グラフ系列設定UIの利便性を向上しました</span>
+                    </a>
+                    <a href="#" class="news-item">
+                        <span class="news-date">2025-12-11</span>
+                        <span class="news-tag tag-release">New Feature</span>
+                        <span class="news-text">チャートの要素間隔を自由に調整できる機能を追加</span>
+                    </a>
+                    <a href="#" class="news-item">
+                        <span class="news-date">2025-12-08</span>
+                        <span class="news-tag tag-info">Update</span>
+                        <span class="news-text">UIレイアウトを刷新し、プレビュー画面を拡大・透かしを削除</span>
+                    </a>
+                    <a href="#" class="news-item">
+                        <span class="news-date">2025-11-30</span>
+                        <span class="news-tag tag-release">New Feature</span>
+                        <span class="news-text">フリーテキストボックス機能の追加とサーバー通信の最適化</span>
+                    </a>
+                    <a href="#" class="news-item">
+                        <span class="news-date">2025-11-29</span>
+                        <span class="news-tag tag-info">Update</span>
+                        <span class="news-text">チャートエディタのUI強化・カラーパレットの刷新</span>
+                    </a>
+                    <a href="#" class="news-item">
+                        <span class="news-date">2025-11-28</span>
+                        <span class="news-tag tag-release">Release</span>
+                        <span class="news-text">経過表エディタ β版 公開</span>
+                    </a>
+                </div>
+
+                <!-- <a href="#" class="view-all-button">更新履歴一覧</a> -->
+            </div>
+        </div>
+    </section>
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white relative z-20">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-heading font-bold text-text mb-4">選ばれる理由：時間と手間からの解放</h2>
                 <div class="w-16 h-1 bg-primary mx-auto rounded-full"></div>
             </div>
-            
+
             <div class="grid md:grid-cols-3 gap-12 text-center">
                 <!-- Feature 1 -->
                 <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div class="w-20 h-20 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-blue-100 transition">
+                    <div
+                        class="w-20 h-20 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-blue-100 transition">
                         📥
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-text">CSVを入れるだけ</h3>
@@ -183,10 +447,11 @@
                         CSVファイルを選択するだけで、瞬時に読み込みます。
                     </p>
                 </div>
-                
+
                 <!-- Feature 2 -->
                 <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-orange-100 transition">
+                    <div
+                        class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-orange-100 transition">
                         🎨
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-text">思いのままに編集</h3>
@@ -195,10 +460,11 @@
                         こだわりの一枚が作れます。
                     </p>
                 </div>
-                
+
                 <!-- Feature 3 -->
                 <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div class="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-pink-100 transition">
+                    <div
+                        class="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-pink-100 transition">
                         🚀
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-text">すぐに共有</h3>
@@ -210,13 +476,16 @@
             </div>
         </div>
     </section>
+
+
     <section class="py-20 bg-white relative z-20">
         <div class="max-w-6xl mx-auto px-6">
-            
-            
+
+
             <div class="grid md:grid-cols-3 gap-12 text-center">
                 <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div class="w-20 h-20 bg-green-50 text-success rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-green-100 transition">
+                    <div
+                        class="w-20 h-20 bg-green-50 text-success rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-green-100 transition">
                         📊
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-text">グラフの自動生成</h3>
@@ -224,9 +493,10 @@
                         作成に時間がかかるグラフも、統計データをインポートするだけで即座に完成します。
                     </p>
                 </div>
-                
+
                 <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-orange-100 transition">
+                    <div
+                        class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-orange-100 transition">
                         🛡️
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-text">医学誌の基準に自動準拠</h3>
@@ -234,9 +504,10 @@
                         煩わしい投稿規定（フォント、解像度、色使い）をアプリが自動で最適化。体裁のチェック作業から解放されます。
                     </p>
                 </div>
-                
+
                 <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div class="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-pink-100 transition">
+                    <div
+                        class="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-pink-100 transition">
                         ⚡
                     </div>
                     <h3 class="text-xl font-bold mb-3 text-text">高速な最終出力</h3>
@@ -248,13 +519,218 @@
         </div>
     </section>
 
+    <!-- How to Use Section -->
+    <section id="how-to-use" class="py-20 bg-bg relative z-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-heading font-bold text-text mb-4">使い方：4ステップで完成</h2>
+                <div class="w-16 h-1 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-600">経過表エディタの基本的な使い方を説明します</p>
+            </div>
+
+            <div class="space-y-12">
+                <!-- Step 1 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                1
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">データをアップロード</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                左側のパネルから、3種類のCSVファイルをアップロードします。
+                            </p>
+                            <div class="bg-blue-50 p-4 rounded-lg space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-blue-500 text-xl">📊</span>
+                                    <div>
+                                        <strong class="text-blue-900">検査データ (lab):</strong>
+                                        <p class="text-sm text-gray-600">形式: 日付, 検査項目名, 値</p>
+                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, WBC, 8500</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-purple-500 text-xl">💊</span>
+                                    <div>
+                                        <strong class="text-purple-900">処方データ (prescription):</strong>
+                                        <p class="text-sm text-gray-600">形式: 開始日, 終了日, 薬剤名, 用量</p>
+                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 2024-01-05, 抗生物質A, 500mg/日
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-orange-500 text-xl">🔬</span>
+                                    <div>
+                                        <strong class="text-orange-900">イベントデータ (events):</strong>
+                                        <p class="text-sm text-gray-600">形式: 日付, イベント名, 備考</p>
+                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 血液培養, 入院時</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-500 rounded">
+                                <p class="text-sm text-green-800">
+                                    <strong>💡 ポイント:</strong> 複数の検査データCSVを追加アップロード可能！各データセットは独立したグラフとして表示されます。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-purple-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                2
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">グラフ設定をカスタマイズ</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                「全般設定」セクションで、グラフの表示を細かく調整できます。
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-purple-900 mb-2">基本設定</h4>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• タイトル・開始日の設定</li>
+                                        <li>• X軸ラベル・目盛り間隔</li>
+                                        <li>• グラフ幅・高さの調整</li>
+                                        <li>• 背景色の変更</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-purple-900 mb-2">詳細設定</h4>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• フォントサイズの一括調整</li>
+                                        <li>• 処方バーの表示位置</li>
+                                        <li>• 数直線の位置設定</li>
+                                        <li>• グラフ間隔の調整</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                3
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">データを編集・追加</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                各セクションで、データの追加・編集・削除が可能です。
+                            </p>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">📈</span>
+                                    <div>
+                                        <strong class="text-orange-900">検査項目:</strong>
+                                        <p class="text-sm text-gray-600">Y軸の範囲、単位、表示/非表示を個別に設定</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">📅</span>
+                                    <div>
+                                        <strong class="text-orange-900">期間:</strong>
+                                        <p class="text-sm text-gray-600">入院期間などのタイムラインを追加・編集</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">🚩</span>
+                                    <div>
+                                        <strong class="text-orange-900">イベント:</strong>
+                                        <p class="text-sm text-gray-600">重要なイベントをマーカーで表示</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">📝</span>
+                                    <div>
+                                        <strong class="text-orange-900">フリーテキスト:</strong>
+                                        <p class="text-sm text-gray-600">任意の位置にテキストを配置</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                4
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">エクスポート</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                完成した経過表を、用途に応じた形式でダウンロードできます。
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-2xl">🖼️</span>
+                                        <strong class="text-green-900">JPEG形式</strong>
+                                    </div>
+                                    <p class="text-sm text-gray-600">プレゼンテーションや印刷に最適</p>
+                                </div>
+                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-2xl">📐</span>
+                                        <strong class="text-green-900">SVG形式</strong>
+                                    </div>
+                                    <p class="text-sm text-gray-600">拡大しても劣化しないベクター形式</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
+                                <p class="text-sm text-blue-800">
+                                    <strong>💾 保存機能:</strong> 「一時保存」で作業内容を保存し、「続きから再開」で後から編集を再開できます。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="mt-16 text-center">
+                <a href="https://script.google.com/macros/s/AKfycbwyUGJ4yp16b4TV-W92zUJeiKVM6RT2jsLjTXjqwm2bIOYI7uYiWeTMe1kFRJQYNg/exec"
+                    target="_blank"
+                    class="inline-block btn-gradient text-white font-bold py-4 px-12 rounded-full transition duration-300 shadow-lg hover:shadow-xl">
+                    今すぐ使ってみる →
+                </a>
+            </div>
+
+            <div class="mt-20"></div>
+            <h3 class="text-2xl font-bold text-center text-text mb-8 font-heading">経過表のサンプル例</h3>
+            <div
+                class="max-w-3xl mx-auto shadow-2xl rounded-xl overflow-hidden border-4 border-white transform hover:scale-[1.01] transition duration-500">
+                <img src="sample.png" alt="経過表エディタの画面サンプル" class="w-full object-cover">
+            </div>
+        </div>
+        </div>
+    </section>
+
     <footer class="bg-bg py-16 text-center border-t border-orange-100">
         <div class="max-w-4xl mx-auto px-6">
             <h2 class="text-2xl md:text-3xl font-heading font-bold mb-8 text-text">
                 医師が、臨床に集中できる未来へ。
             </h2>
-            <a href="https://script.google.com/macros/s/AKfycbzXolDQJMQAIaFar1o0hMtjolkb2JXDaDcuMIRnNSw9v7HIXT7BCe9npI8Yz3F5VUUH/exec"
-               class="inline-block btn-gradient text-white font-bold py-3 px-10 rounded-full transition duration-300 shadow-md hover:shadow-lg">
+            <a href="https://script.google.com/macros/s/AKfycbwyUGJ4yp16b4TV-W92zUJeiKVM6RT2jsLjTXjqwm2bIOYI7uYiWeTMe1kFRJQYNg/exec"
+                class="inline-block btn-gradient text-white font-bold py-3 px-10 rounded-full transition duration-300 shadow-md hover:shadow-lg">
                 トライアルして時間を手に入れる
             </a>
             <p class="mt-12 text-xs text-gray-400 font-sans">
@@ -264,4 +740,5 @@
     </footer>
 
 </body>
+
 </html>
