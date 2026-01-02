@@ -317,13 +317,14 @@
         <div class="max-w-6xl mx-auto text-center relative z-10">
 
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-heading font-bold mb-6 leading-tight text-text">
-                経過表があっという間に完成。<br>
-                <span class="reduction-highlight font-extrabold">わずか10分で作れます。</span>
+                パワポ作業のストレスから解放。<br>
+                <span class="reduction-highlight font-extrabold">経過表がわずか10分で作れます。</span>
             </h1>
 
             <p class="text-lg md:text-2xl mb-10 text-gray-700 max-w-3xl mx-auto leading-relaxed font-bold">
-                もう、複雑な経過表作成で徹夜する必要はありません。<br class="hidden md:inline">
-                あなたの貴重な時間を、無駄にしない。快適な経過表作成を支援。
+                Excelでは難しかった、複雑な投薬期間やバイタル推移の可視化。<br class="hidden md:inline">
+                学会発表の準備で、最も時間がかかるタイムライン作成。
+                エディ太を使えば、データ入力だけで、スライドに載せられる美しく正確な経過表が完成します。
             </p>
 
             <div class="mb-16">
@@ -341,7 +342,8 @@
                 <div
                     class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl z-10 px-4">
                     <div class="relative group">
-                        <img src="https://placehold.co/1000x600/ffffff/dddddd?text=Keika-Hyo+Editor+UI+%7C+Auto+Graph+Generation"
+                        <!-- <img src="https://placehold.co/1000x600/ffffff/dddddd?text=Keika-Hyo+Editor+UI+%7C+Auto+Graph+Generation" -->
+                        <img src="sample.png"
                             alt="自動グラフ作成画面"
                             class="rounded-xl shadow-2xl border-4 border-white transform rotate-[-2deg] group-hover:rotate-0 transition duration-500 w-full object-cover">
                         <div
@@ -352,7 +354,7 @@
 
                 <div
                     class="tag-label absolute top-[-10%] md:top-[0%] left-[5%] md:left-[10%] float-slow text-success border-2 border-success/50">
-                    <span class="bg-success/20 p-2 rounded-full text-lg">⏱️</span> グラフ設定に費やしていた5時間 → 15分
+                    <span class="bg-success/20 p-2 rounded-full text-lg">⏱️</span> 経過表作成に費やす時間：5時間 → 10分
                 </div>
 
                 <div
@@ -367,7 +369,7 @@
 
                 <div
                     class="tag-label absolute bottom-[0%] md:bottom-[20%] right-[2%] md:right-[5%] float-slow text-pink-600">
-                    <span class="bg-pink-100 p-2 rounded-full text-lg">🏆</span> 査読対応の高品質出力
+                    <span class="bg-pink-100 p-2 rounded-full text-lg">🏆</span> JPEG/SVGにカンタン出力
                 </div>
 
                 <div
@@ -429,7 +431,216 @@
             </div>
         </div>
     </section>
-    <section id="features" class="py-20 bg-white relative z-20">
+
+    <!-- How to Use Section -->
+    <section id="how-to-use" class="py-20 bg-bg relative z-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-heading font-bold text-text mb-4">使い方：4ステップで完成</h2>
+                <div class="w-16 h-1 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-4 text-gray-600">経過表エディタの基本的な使い方を説明します</p>
+            </div>
+
+            <div class="space-y-12">
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                1
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">データをアップロード</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                左側のパネルから、3種類のCSVファイルをアップロードします。
+                            </p>
+                            <div class="bg-blue-50 p-4 rounded-lg space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <span class="text-blue-500 text-xl">📊</span>
+                                    <div>
+                                        <strong class="text-blue-900">検査データ:</strong>
+                                        <p class="text-sm text-gray-600">形式: 日付, 検査項目名, 値</p>
+                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, WBC, 8500</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-purple-500 text-xl">💊</span>
+                                    <div>
+                                        <strong class="text-purple-900">処方データ:</strong>
+                                        <p class="text-sm text-gray-600">形式: 開始日, 終了日, 薬剤名, 用量</p>
+                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 2024-01-05, 抗生物質A, 500mg
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <span class="text-orange-500 text-xl">🔬</span>
+                                    <div>
+                                        <strong class="text-orange-900">イベントデータ:</strong>
+                                        <p class="text-sm text-gray-600">形式: 日付, イベント名, 備考</p>
+                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 血液培養, 入院時</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-500 rounded">
+                                <p class="text-sm text-green-800">
+                                    <strong>💡 ポイント:</strong> ブラウザ上でデータの編集を行うことも出来ます。編集途中のデータでも一時保存が可能です。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-purple-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                2
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">グラフ設定をカスタマイズ</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                「全般設定」セクションで、グラフの表示を細かく調整できます。
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-purple-900 mb-2">基本設定</h4>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• タイトル・開始日の設定</li>
+                                        <li>• X軸ラベル・目盛り間隔</li>
+                                        <li>• グラフ幅・高さの調整</li>
+                                        <li>• 省略期間の設定</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-bold text-purple-900 mb-2">詳細設定</h4>
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• フォント設定</li>
+                                        <li>• フォントサイズの一括調整</li>
+                                        <li>• 処方バーの位置設定</li>
+                                        <li>• 数直線の位置設定</li>
+                                        
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                3
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">データを編集・追加</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                各セクションで、データの追加・編集・削除が可能です。
+                            </p>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">📈</span>
+                                    <div>
+                                        <strong class="text-orange-900">検査データ</strong>
+                                        <p class="text-sm text-gray-600">グラフの描画，複数段でのグラフ表示，軸範囲を個別に設定可能</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">💊</span>
+                                    <div>
+                                        <strong class="text-orange-900">処方</strong>
+                                        <p class="text-sm text-gray-600">複数種類の処方，内服量の漸減も細かく反映</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">🚩</span>
+                                    <div>
+                                        <strong class="text-orange-900">イベント</strong>
+                                        <p class="text-sm text-gray-600">重要なイベント（ex.エコー，生検）をマーカーで表示</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">📝</span>
+                                    <div>
+                                        <strong class="text-orange-900">フリーテキスト:</strong>
+                                        <p class="text-sm text-gray-600">任意の位置にテキストを配置可能</p>
+                                    </div>
+                                </div>
+                                 <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
+                                    <span class="text-2xl">・・・</span>
+                                    <div>
+                                        <strong class="text-orange-900">その他</strong>
+                                        <p class="text-sm text-gray-600">ICU入室期間，バイオマーカーの閾値なども設定可能</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
+                    <div class="flex items-start gap-6">
+                        <div class="flex-shrink-0">
+                            <div
+                                class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
+                                4
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-text mb-4">エクスポート</h3>
+                            <p class="text-gray-700 mb-4 leading-relaxed">
+                                完成した経過表を、用途に応じた形式でダウンロードできます。
+                            </p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-2xl">🖼️</span>
+                                        <strong class="text-green-900">JPEG形式</strong>
+                                    </div>
+                                    <p class="text-sm text-gray-600">プレゼンテーションや印刷に最適</p>
+                                </div>
+                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-2xl">📐</span>
+                                        <strong class="text-green-900">SVG形式</strong>
+                                    </div>
+                                    <p class="text-sm text-gray-600">拡大しても劣化しないベクター形式</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
+                                <p class="text-sm text-blue-800">
+                                    <strong>💾 保存機能:</strong> 「一時保存」で作業内容を保存し、「続きから再開」で後から編集を再開できます。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-16 text-center">
+                <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
+                    target="_blank"
+                    class="inline-block btn-gradient text-white font-bold py-4 px-12 rounded-full transition duration-300 shadow-lg hover:shadow-xl">
+                    今すぐ使ってみる →
+                </a>
+            </div>
+
+            <div class="mt-20"></div>
+            <h3 class="text-2xl font-bold text-center text-text mb-8 font-heading">経過表のサンプル</h3>
+            <div
+                class="max-w-3xl mx-auto shadow-2xl rounded-xl overflow-hidden border-4 border-white transform hover:scale-[1.01] transition duration-500">
+                <img src="sample.png" alt="経過表エディタの画面サンプル" class="w-full object-cover">
+            </div>
+        </div>
+        </div>
+    </section>
+        <section id="features" class="py-20 bg-white relative z-20">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-heading font-bold text-text mb-4">選ばれる理由：時間と手間からの解放</h2>
@@ -518,207 +729,6 @@
         </div>
     </section>
 
-    <!-- How to Use Section -->
-    <section id="how-to-use" class="py-20 bg-bg relative z-20">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-heading font-bold text-text mb-4">使い方：4ステップで完成</h2>
-                <div class="w-16 h-1 bg-primary mx-auto rounded-full"></div>
-                <p class="mt-4 text-gray-600">経過表エディタの基本的な使い方を説明します</p>
-            </div>
-
-            <div class="space-y-12">
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                1
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">データをアップロード</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                左側のパネルから、3種類のCSVファイルをアップロードします。
-                            </p>
-                            <div class="bg-blue-50 p-4 rounded-lg space-y-3">
-                                <div class="flex items-start gap-3">
-                                    <span class="text-blue-500 text-xl">📊</span>
-                                    <div>
-                                        <strong class="text-blue-900">検査データ (lab):</strong>
-                                        <p class="text-sm text-gray-600">形式: 日付, 検査項目名, 値</p>
-                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, WBC, 8500</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="text-purple-500 text-xl">💊</span>
-                                    <div>
-                                        <strong class="text-purple-900">処方データ (prescription):</strong>
-                                        <p class="text-sm text-gray-600">形式: 開始日, 終了日, 薬剤名, 用量</p>
-                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 2024-01-05, 抗生物質A, 500mg/日
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="text-orange-500 text-xl">🔬</span>
-                                    <div>
-                                        <strong class="text-orange-900">イベントデータ (events):</strong>
-                                        <p class="text-sm text-gray-600">形式: 日付, イベント名, 備考</p>
-                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 血液培養, 入院時</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-500 rounded">
-                                <p class="text-sm text-green-800">
-                                    <strong>💡 ポイント:</strong> 複数の検査データCSVを追加アップロード可能！各データセットは独立したグラフとして表示されます。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-purple-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                2
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">グラフ設定をカスタマイズ</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                「全般設定」セクションで、グラフの表示を細かく調整できます。
-                            </p>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div class="bg-purple-50 p-4 rounded-lg">
-                                    <h4 class="font-bold text-purple-900 mb-2">基本設定</h4>
-                                    <ul class="text-sm text-gray-700 space-y-1">
-                                        <li>• タイトル・開始日の設定</li>
-                                        <li>• X軸ラベル・目盛り間隔</li>
-                                        <li>• グラフ幅・高さの調整</li>
-                                        <li>• 背景色の変更</li>
-                                    </ul>
-                                </div>
-                                <div class="bg-purple-50 p-4 rounded-lg">
-                                    <h4 class="font-bold text-purple-900 mb-2">詳細設定</h4>
-                                    <ul class="text-sm text-gray-700 space-y-1">
-                                        <li>• フォントサイズの一括調整</li>
-                                        <li>• 処方バーの表示位置</li>
-                                        <li>• 数直線の位置設定</li>
-                                        <li>• グラフ間隔の調整</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                3
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">データを編集・追加</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                各セクションで、データの追加・編集・削除が可能です。
-                            </p>
-                            <div class="space-y-3">
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">📈</span>
-                                    <div>
-                                        <strong class="text-orange-900">検査項目:</strong>
-                                        <p class="text-sm text-gray-600">Y軸の範囲、単位、表示/非表示を個別に設定</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">📅</span>
-                                    <div>
-                                        <strong class="text-orange-900">期間:</strong>
-                                        <p class="text-sm text-gray-600">入院期間などのタイムラインを追加・編集</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">🚩</span>
-                                    <div>
-                                        <strong class="text-orange-900">イベント:</strong>
-                                        <p class="text-sm text-gray-600">重要なイベントをマーカーで表示</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">📝</span>
-                                    <div>
-                                        <strong class="text-orange-900">フリーテキスト:</strong>
-                                        <p class="text-sm text-gray-600">任意の位置にテキストを配置</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                4
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">エクスポート</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                完成した経過表を、用途に応じた形式でダウンロードできます。
-                            </p>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="text-2xl">🖼️</span>
-                                        <strong class="text-green-900">JPEG形式</strong>
-                                    </div>
-                                    <p class="text-sm text-gray-600">プレゼンテーションや印刷に最適</p>
-                                </div>
-                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="text-2xl">📐</span>
-                                        <strong class="text-green-900">SVG形式</strong>
-                                    </div>
-                                    <p class="text-sm text-gray-600">拡大しても劣化しないベクター形式</p>
-                                </div>
-                            </div>
-                            <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
-                                <p class="text-sm text-blue-800">
-                                    <strong>💾 保存機能:</strong> 「一時保存」で作業内容を保存し、「続きから再開」で後から編集を再開できます。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-16 text-center">
-                <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
-                    target="_blank"
-                    class="inline-block btn-gradient text-white font-bold py-4 px-12 rounded-full transition duration-300 shadow-lg hover:shadow-xl">
-                    今すぐ使ってみる →
-                </a>
-            </div>
-
-            <div class="mt-20"></div>
-            <h3 class="text-2xl font-bold text-center text-text mb-8 font-heading">経過表のサンプル</h3>
-            <div
-                class="max-w-3xl mx-auto shadow-2xl rounded-xl overflow-hidden border-4 border-white transform hover:scale-[1.01] transition duration-500">
-                <img src="sample.png" alt="経過表エディタの画面サンプル" class="w-full object-cover">
-            </div>
-        </div>
-        </div>
-    </section>
-
     <footer class="bg-bg py-16 text-center border-t border-orange-100">
         <div class="max-w-4xl mx-auto px-6">
             <h2 class="text-2xl md:text-3xl font-heading font-bold mb-8 text-text">
@@ -726,7 +736,7 @@
             </h2>
             <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
                 class="inline-block btn-gradient text-white font-bold py-3 px-10 rounded-full transition duration-300 shadow-md hover:shadow-lg">
-                トライアルして時間を手に入れる
+                トライアルを始める
             </a>
             <p class="mt-12 text-xs text-gray-400 font-sans">
                 <small>&copy; 2026 Ryuhei Aoyama.</small>
