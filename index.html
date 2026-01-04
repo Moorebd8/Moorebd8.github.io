@@ -250,6 +250,120 @@
             line-height: 1;
         }
 
+        /* ハンバーガーメニュー */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            z-index: 1001;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: #4A3B32;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 70%;
+            height: 100vh;
+            background-color: #FDF9EE;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            padding-top: 80px;
+            display: none;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+            display: block;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 20px 30px;
+            color: #4A3B32;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 1px solid #e0e0e0;
+            transition: background-color 0.2s;
+        }
+
+        .mobile-nav a:hover {
+            background-color: rgba(232, 139, 134, 0.1);
+        }
+
+        .mobile-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            /* モバイルでのみナビゲーションとオーバーレイを有効化 */
+            .mobile-nav,
+            .mobile-overlay {
+                display: block;
+            }
+
+            /* activeでない場合は非表示 */
+            .mobile-nav:not(.active) {
+                display: none;
+            }
+
+            .mobile-overlay:not(.active) {
+                display: none;
+            }
+
+            /* モバイルでフローティングラベルを非表示 */
+            .tag-label {
+                display: none !important;
+            }
+
+            /* モバイルでトップに戻るボタンを小さく */
+            #back-to-top {
+                width: 80px !important;
+                height: 80px !important;
+                bottom: 20px !important;
+                right: 20px !important;
+            }
+        }
+
         @media (max-width: 600px) {
             .news-section {
                 padding: 20px 10px 40px;
@@ -295,7 +409,8 @@
 
 <body class="antialiased overflow-x-hidden font-sans">
 
-    <header class="w-full py-6 px-4 md:px-8 flex justify-between items-center max-w-7xl mx-auto">
+    <header
+        class="w-full py-6 px-4 md:px-8 flex justify-between items-center max-w-7xl mx-auto relative sticky top-0 bg-bg z-50 shadow-sm">
         <div class="text-2xl font-heading font-bold tracking-tight text-text">
             エディ太
         </div>
@@ -305,13 +420,33 @@
             <a href="#how-to-use" class="hover:text-primary transition">使い方</a>
             <a href="https://forms.gle/TxAQug1snxKUvzQW6" target="_blank"
                 class="hover:text-primary transition">問い合わせ</a>
+            <a href="https://forms.gle/op263tKbMSaEzgc28" target="_blank"
+                class="hover:text-primary transition">新規会員登録</a>
             <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
                 target="_blank"
                 class="border-2 border-text px-6 py-2 rounded-full hover:bg-text hover:text-bg transition">
                 ログイン
             </a>
         </nav>
+        <!-- ハンバーガーメニューボタン -->
+        <div class="hamburger md:hidden" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </header>
+
+    <!-- モバイルナビゲーション -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="#news" class="mobile-nav-link">お知らせ</a>
+        <a href="#features" class="mobile-nav-link">機能について</a>
+        <a href="#how-to-use" class="mobile-nav-link">使い方</a>
+        <a href="https://forms.gle/TxAQug1snxKUvzQW6" target="_blank" class="mobile-nav-link">問い合わせ</a>
+        <a href="https://forms.gle/op263tKbMSaEzgc28" target="_blank" class="mobile-nav-link">新規会員登録</a>
+        <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
+            target="_blank" class="mobile-nav-link">ログイン</a>
+    </nav>
 
     <main class="relative pt-12 pb-24 px-4 md:pt-20 overflow-hidden">
         <div class="max-w-6xl mx-auto text-center relative z-10">
@@ -322,9 +457,9 @@
             </h1>
 
             <p class="text-lg md:text-2xl mb-10 text-gray-700 max-w-4xl mx-auto leading-relaxed font-bold">
-                ExcelやPowerPointでは難しかった、複雑なグラフの可視化。<br class="hidden md:inline">
+                ExcelやPowerPointでは大変だった、複雑なグラフの可視化。<br class="hidden md:inline">
                 学会発表準備で最も手間がかかる経過表作成。<br class="hidden md:inline">
-                エディ太を使えば、<span class="reduction-highlight">そのまま使える</span>経過表が一瞬で完成します。
+                エディ太を使えば、<span class="reduction-highlight">そのまま使える</span>経過表が完成します。
             </p>
 
             <div class="mb-16">
@@ -602,14 +737,14 @@
                                         <span class="text-2xl">🖼️</span>
                                         <strong class="text-green-900">JPEG形式</strong>
                                     </div>
-                                    <p class="text-sm text-gray-600">プレゼンテーションや印刷に最適</p>
+                                    <p class="text-sm text-gray-600">そのままプレゼン資料に貼り付けできる。</p>
                                 </div>
                                 <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
                                     <div class="flex items-center gap-3 mb-2">
                                         <span class="text-2xl">📐</span>
                                         <strong class="text-green-900">SVG形式</strong>
                                     </div>
-                                    <p class="text-sm text-gray-600">拡大しても劣化しないベクター形式</p>
+                                    <p class="text-sm text-gray-600">拡大しても画質が劣化しない。PowerPointで引き続き編集も可能。</p>
                                 </div>
                             </div>
                             <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
@@ -652,10 +787,10 @@
                         class="w-20 h-20 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-blue-100 transition">
                         📥
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">CSVを入れるだけ</h3>
+                    <h3 class="text-xl font-bold mb-3 text-text">ファイルを選ぶだけ</h3>
                     <p class="text-gray-600 leading-relaxed">
-                        Labデータ、処方、イベント。<br>
-                        CSVファイルを選択するだけで、瞬時に読み込みます。
+                        検査値から処方薬まで。<br>
+                        ファイルをアップすれば、瞬時にグラフが出来ます。
                     </p>
                 </div>
 
@@ -676,10 +811,10 @@
                         class="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-pink-100 transition">
                         🚀
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">すぐに共有</h3>
+                    <h3 class="text-xl font-bold mb-3 text-text">高速な出力</h3>
                     <p class="text-gray-600 leading-relaxed">
-                        作成した経過表はSVGやJPEGとして保存。<br>
-                        論文やプレゼン資料に最適です。
+                        作成した経過表は高品質のSVGやJPEGとして保存。<br>
+                        そのままプレゼン資料に貼り付け可能です。
                     </p>
                 </div>
             </div>
@@ -687,7 +822,7 @@
     </section>
 
 
-    <section class="py-20 bg-white relative z-20">
+    <!-- <section class="py-20 bg-white relative z-20">
         <div class="max-w-6xl mx-auto px-6">
 
 
@@ -726,7 +861,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <footer class="bg-bg py-16 text-center border-t border-orange-100">
         <div class="max-w-4xl mx-auto px-6">
@@ -762,6 +897,31 @@
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
+            });
+        });
+
+        // ハンバーガーメニュー
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        function toggleMenu() {
+            hamburger.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+            mobileOverlay.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+        }
+
+        hamburger.addEventListener('click', toggleMenu);
+        mobileOverlay.addEventListener('click', toggleMenu);
+
+        // メニュー項目をクリックしたらメニューを閉じる
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!link.hasAttribute('target')) {
+                    toggleMenu();
+                }
             });
         });
     </script>
