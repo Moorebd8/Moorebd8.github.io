@@ -1,941 +1,497 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>経過表エディタ</title>
+    <title>Edita</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Kaisei+Opti:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;700;800&family=Zen+Maru+Gothic:wght=500;700&display=swap"
-        rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        bg: '#FDF9EE',
-                        text: '#4A3B32',
-                        primary: '#E88B86',
-                        accent: '#F3C583',
-                        success: '#10B981',
-                    },
-                    fontFamily: {
-
-                        sans: ['"Noto Sans JP"', 'Inter', 'sans-serif'],
-                        heading: ['"Zen Maru Gothic"', 'sans-serif'],
-                        kaisei: ['"Kaisei Opti"', 'serif'],
-                    },
-                    animation: {
-                        blob: "blob 7s infinite",
-                        float: "float 6s ease-in-out infinite",
-                    },
-                    keyframes: {
-                        blob: {
-                            "0%": { transform: "translate(0px, 0px) scale(1)" },
-                            "33%": { transform: "translate(30px, -50px) scale(1.1)" },
-                            "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
-                            "100%": { transform: "translate(0px, 0px) scale(1)" },
-                        },
-                        float: {
-                            "0%": { transform: "translateY(0px)" },
-                            "50%": { transform: "translateY(-10px)" },
-                            "100%": { transform: "translateY(0px)" },
-                        }
-                    },
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            background-color: #FDF9EE;
-            color: #4A3B32;
-        }
-
-        .float-slow {
-            animation-duration: 6s;
-        }
-
-        .float-medium {
-            animation-duration: 5s;
-        }
-
-        .float-fast {
-            animation-duration: 4s;
-        }
-
-        .tag-label {
-            background: white;
-            padding: 8px 16px;
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            font-weight: bold;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            z-index: 20;
-            white-space: nowrap;
-        }
-
-        .btn-gradient {
-            background: linear-gradient(135deg, #E88B86 0%, #E8A87C 100%);
-            transition: all 0.3s ease;
-        }
-
-        .btn-gradient:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px rgba(232, 139, 134, 0.4);
-        }
-
-        .reduction-highlight {
-            background: linear-gradient(45deg, #10B981, #34D399);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-
         :root {
-            --news-color-primary: #E88B86;
-            /* Site Primary (Pink) */
-            --news-color-secondary: #F3C583;
-            /* Site Accent (Orange) */
-            --news-color-background: #FDF9EE;
-            /* Site Bg */
-            --news-color-card-bg: #ffffff;
-            --news-color-text: #4A3B32;
-            /* Site Text */
-            --news-color-border: #e0e0e0;
-            --news-color-active-bg: #fff5f5;
-            /* Light Pink for active */
+            --primary-teal: #00A7B1;
+            --accent-glow: rgba(0, 167, 177, 0.6);
+            --dark-gray: #333333;
+            --light-bg: #f5f5f5;
         }
 
-        .news-section {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: var(--news-color-card-bg);
-            padding: 30px 20px 50px;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            text-align: center;
-        }
-
-        .news-section h2 {
-            font-family: "Zen Maru Gothic", sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--news-color-text);
-            margin-bottom: 40px;
-        }
-
-        .news-list-wrapper {
-            max-height: 350px;
-            overflow-y: auto;
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            color: var(--dark-gray);
+            background-color: #fff;
             overflow-x: hidden;
-            margin-bottom: 40px;
-            padding: 0 10px;
         }
 
-        .news-item {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            padding: 15px 10px;
-            border-bottom: 1px solid var(--news-color-border);
-            text-align: left;
-            font-size: 15px;
-            line-height: 1.6;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.1s;
-            color: var(--news-color-text);
-            text-decoration: none;
-            margin: 0 -10px;
-        }
-
-        .news-item:hover {
-            background-color: #f9f9f9;
-            transform: translateY(-1px);
-        }
-
-        .news-item:active {
-            background-color: var(--news-color-active-bg);
-            transform: scale(0.99);
-        }
-
-        .news-list-wrapper .news-item:last-child {
-            border-bottom: none;
-        }
-
-        .news-date {
-            flex-shrink: 0;
-            width: 100px;
-            color: #888;
-            margin-right: 15px;
-            font-weight: 500;
-            font-family: "Inter", sans-serif;
-        }
-
-        .news-tag {
-            flex-shrink: 0;
-            display: inline-block;
-            padding: 4px 10px;
-            margin-right: 15px;
-            font-size: 11px;
-            border-radius: 20px;
-            white-space: nowrap;
-            font-weight: 600;
-        }
-
-        /* Tags */
-        .tag-release {
-            color: #003333;
-            background-color: #99cccc;
-            border: 1px solid #003333;
-        }
-
-        .tag-feature {
-            color: #CC3333;
-            background-color: #FF9999;
-            border: 1px solid #CC3333;
-        }
-
-        .tag-press {
-            color: #FF6633;
-            background-color: #FFCCFF;
-            border: 1px solid #FF6633;
-        }
-
-        .tag-info {
-            color: #4A3B32;
-            background-color: #f0f0f0;
-            border: 1px solid #dcdcdc;
-        }
-
-        .news-text {
-            flex-grow: 1;
-            color: var(--news-color-text);
-            min-width: 0;
-            padding-right: 5px;
-        }
-
-        .view-all-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 40px;
-            background-color: var(--news-color-primary);
-            color: #fff;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 10px;
-            transition: background-color 0.3s ease-in-out, box-shadow 0.3s;
-            box-shadow: 0 4px 15px rgba(232, 139, 134, 0.4);
-            letter-spacing: 0.5px;
-        }
-
-        .view-all-button:hover {
-            background-color: #E8A87C;
-            box-shadow: 0 6px 20px rgba(232, 139, 134, 0.5);
-        }
-
-        .view-all-button::after {
-            content: '›';
-            margin-left: 10px;
-            font-size: 24px;
-            line-height: 1;
-        }
-
-        /* ハンバーガーメニュー */
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 5px;
-            z-index: 1001;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background-color: #4A3B32;
-            transition: all 0.3s ease;
-            border-radius: 2px;
-        }
-
-        .hamburger.active span:nth-child(1) {
-            transform: rotate(45deg) translate(8px, 8px);
-        }
-
-        .hamburger.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger.active span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -7px);
-        }
-
-        .mobile-nav {
-            position: fixed;
-            top: 0;
-            right: -100%;
-            width: 70%;
+        /* Diagonal Hero Background */
+        .hero-section {
+            position: relative;
             height: 100vh;
-            background-color: #FDF9EE;
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-            transition: right 0.3s ease;
-            z-index: 1000;
-            padding-top: 80px;
-            display: none;
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
         }
 
-        .mobile-nav.active {
-            right: 0;
-            display: block;
-        }
-
-        .mobile-nav a {
-            display: block;
-            padding: 20px 30px;
-            color: #4A3B32;
-            text-decoration: none;
-            font-weight: bold;
-            border-bottom: 1px solid #e0e0e0;
-            transition: background-color 0.2s;
-        }
-
-        .mobile-nav a:hover {
-            background-color: rgba(232, 139, 134, 0.1);
-        }
-
-        .mobile-overlay {
-            position: fixed;
+        .hero-bg {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            height: 100%;
+            /* background-image: url('エディ太.png'); */
+            /* background-size: cover; */
+            /* background-position: center; */
+            background: linear-gradient(135deg, var(--primary-teal) 0%, rgba(170, 244, 152, 0.8) 70%, transparent 100%);
+            z-index: -2;
         }
 
-        .mobile-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
+        /* Slanted Overlay */
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(135deg, var(--primary-teal) 0%, rgba(0, 167, 177, 0.8) 50%, transparent 100%);
+            clip-path: polygon(0 0, 100% 100%, 0 100%);
+            z-index: -1;
         }
 
-        @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
-            }
-
-            /* モバイルでのみナビゲーションとオーバーレイを有効化 */
-            .mobile-nav,
-            .mobile-overlay {
-                display: block;
-            }
-
-            /* activeでない場合は非表示 */
-            .mobile-nav:not(.active) {
-                display: none;
-            }
-
-            .mobile-overlay:not(.active) {
-                display: none;
-            }
-
-            /* モバイルでフローティングラベルを非表示 */
-            .tag-label {
-                display: none !important;
-            }
-
-            /* モバイルでトップに戻るボタンを小さく */
-            #back-to-top {
-                width: 80px !important;
-                height: 80px !important;
-                bottom: 20px !important;
-                right: 20px !important;
-            }
+        .hero-title {
+            font-weight: 900;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
         }
 
-        @media (max-width: 600px) {
-            .news-section {
-                padding: 20px 10px 40px;
-                border-radius: 12px;
-            }
+        /* Diagonal Nav Separators */
+        .nav-item {
+            position: relative;
+            padding: 0 20px;
+        }
 
-            .news-section h2 {
-                font-size: 26px;
-            }
+        .nav-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%) skewX(-20deg);
+            width: 1px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
 
-            .news-item {
-                display: block;
-                padding: 12px 0;
-                margin: 0;
-            }
+        /* Standard Rectangle Button */
+        .btn-slanted {
+            display: inline-block;
+            background-color: var(--primary-teal);
+            color: white;
+            padding: 12px 40px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-            .news-date {
-                display: inline-block;
-                width: auto;
-                margin-right: 10px;
-                margin-bottom: 5px;
-                font-size: 13px;
-            }
+        .btn-slanted span {
+            display: inline-block;
+        }
 
-            .news-tag {
-                margin-right: 10px;
-                margin-bottom: 8px;
-            }
+        .btn-slanted:hover {
+            background-color: #008f99;
+            box-shadow: 0 10px 20px var(--accent-glow);
+        }
 
-            .news-text {
-                display: block;
-                padding-right: 0;
-            }
+        .news-list-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+            /* スクロールバーとの重なり防止 */
+        }
 
-            .view-all-button {
-                padding: 14px 30px;
-                font-size: 16px;
-                border-radius: 8px;
-            }
+        /* News Section Diagonal Cut */
+        .news-item {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+
+        .news-item:hover {
+            background-color: #fafafa;
+        }
+
+        .news-date-box {
+            background-color: var(--primary-teal);
+            color: white;
+            padding: 10px 20px;
+            clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+            min-width: 120px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-teal);
+            border-radius: 4px;
         }
     </style>
 </head>
 
-<body class="antialiased overflow-x-hidden font-sans">
+<body>
 
+    <!-- Header Navigation -->
     <header
-        class="w-full py-2 px-4 md:px-8 flex justify-between items-center max-w-7xl mx-auto relative sticky top-0 bg-bg z-50 shadow-sm">
-        <div class="flex items-center">
-            <img src="logo.png" alt="エディ太" class="h-20 w-auto object-contain">
+        class="fixed top-0 left-0 w-full z-50 px-8 py-6 flex justify-between items-center bg-transparent transition-all duration-300">
+        <div class="text-white font-black text-2xl tracking-tighter">
+            Medi Plot <span class="text-xs block font-normal tracking-widest opacity-70 italic">Editor BY EDITA</span>
         </div>
-        <nav class="hidden md:flex gap-8 font-bold text-sm items-center">
-            <a href="#news" class="hover:text-primary transition">お知らせ</a>
-            <a href="#features" class="hover:text-primary transition">機能について</a>
-            <a href="#how-to-use" class="hover:text-primary transition">使い方</a>
-            <a href="https://forms.gle/TxAQug1snxKUvzQW6" target="_blank"
-                class="hover:text-primary transition">問い合わせ</a>
-            <a href="https://forms.gle/op263tKbMSaEzgc28" target="_blank"
-                class="hover:text-primary transition">新規会員登録</a>
-            <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
-                target="_blank"
-                class="border-2 border-text px-6 py-2 rounded-full hover:bg-text hover:text-bg transition">
-                ログイン
-            </a>
+        <!-- <div class="text-white font-black text-2xl tracking-tighter">
+            EdiTA <span class="text-xs block font-normal tracking-widest opacity-70 italic">EDITOR BY EDITA</span>
+        </div> -->
+        <nav class="hidden lg:flex items-center text-white text-sm font-bold">
+            <a href="#features" class="nav-item hover:text-cyan-200 transition">FEATURES</a>
+            <a href="#how-to-use" class="nav-item hover:text-cyan-200 transition">HOW TO USE</a>
+            <a href="https://script.google.com/macros/s/AKfycbzFnMWq_MSaZfhYPA6mQzuS1xFBYz06Se-8t7iAH4lmWo_ijujqjuL-U8mkyeJN79KZ/exec"
+                target="_blank" class="nav-item hover:text-cyan-200 transition">CONTACT</a>
+            <div class="ml-8">
+                <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
+                    target="_blank" class="btn-slanted"><span>LOG IN</span></a>
+            </div>
         </nav>
-        <!-- ハンバーガーメニューボタン -->
-        <div class="hamburger md:hidden" id="hamburger">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
     </header>
 
-    <!-- モバイルナビゲーション -->
-    <div class="mobile-overlay" id="mobileOverlay"></div>
-    <nav class="mobile-nav" id="mobileNav">
-        <a href="#news" class="mobile-nav-link">お知らせ</a>
-        <a href="#features" class="mobile-nav-link">機能について</a>
-        <a href="#how-to-use" class="mobile-nav-link">使い方</a>
-        <a href="https://forms.gle/TxAQug1snxKUvzQW6" target="_blank" class="mobile-nav-link">問い合わせ</a>
-        <a href="https://forms.gle/op263tKbMSaEzgc28" target="_blank" class="mobile-nav-link">新規会員登録</a>
-        <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
-            target="_blank" class="mobile-nav-link">ログイン</a>
-    </nav>
-
-    <main class="relative pt-12 pb-24 px-4 md:pt-20 overflow-hidden">
-        <div class="max-w-6xl mx-auto text-center relative z-10">
-            <h1 class="text-3xl md:text-5xl lg:text-6xl font-heading font-bold mb-6 leading-snug text-text">
-                <span class="reduction-highlight font-extrabold text-[1.2em]">わずか10分で完成。</span><br>
-                <p>経過表作成の面倒な作業から</span><br>
-                解放されませんか？<br></p>
-                
-            </h1>
-
-
-            <div class="mb-16">
-                <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
-                    class="btn-gradient inline-flex items-center justify-center text-white text-xl font-bold py-4 px-12 rounded-full shadow-xl relative overflow-hidden group">
-                    <span class="relative z-10">トライアルを始める</span>
-                    <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition duration-300">
-                    </div>
-                </a>
-
-            </div>
-            <p class="text-lg md:text-2xl mb-10 text-gray-700 max-w-4xl mx-auto leading-relaxed font-bold">
-                ExcelやPowerPointを往復するのが大変なグラフ作り。<br>
-                学会発表準備で最も面倒なのが経過表作成ですよね。<br>
-                エディ太を使えば、<span class="reduction-highlight">そのまま使える</span>経過表が完成します。
-            </p>
-
-          
-
-            <div class="relative max-w-5xl mx-auto mt-8 h-[300px] md:h-[500px] lg:h-[600px]">
-
-                <div
-                    class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl z-10 px-4">
-                    <div class="relative group">
-                        <!-- <img src="https://placehold.co/1000x600/ffffff/dddddd?text=Keika-Hyo+Editor+UI+%7C+Auto+Graph+Generation" -->
-                        <img src="sample.png" alt="自動グラフ作成画面"
-                            class="rounded-xl shadow-2xl border-4 border-white transform rotate-[-2deg] group-hover:rotate-0 transition duration-500 w-full object-cover">
-                        <div
-                            class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none rounded-xl">
-                        </div>
-                    </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="container mx-auto px-8 relative z-10">
+            <div class="max-w-4xl text-white">
+                <span
+                    class="inline-block bg-white/20 backdrop-blur-sm px-4 py-1 mb-4 text-xs tracking-widest font-bold border-l-4 border-white uppercase">
+                    Revolutionizing Medical Presentation
+                </span>
+                <h1 class="hero-title text-6xl md:text-8xl lg:text-9xl mb-8 uppercase italic">
+                    Beyond<br>The Chart.
+                </h1>
+                <p class="text-xl md:text-2xl max-w-xl mb-12 opacity-90 leading-relaxed font-light">
+                    わずか10分で完成。学会発表で最も手間がかかる<br>経過表作成の「常識」を塗り替えます。
+                </p>
+                <div class="flex gap-6">
+                    <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
+                        target="_blank" class="btn-slanted bg-white !text-teal-600"><span>START TRIAL</span></a>
+                    <a href="https://script.google.com/macros/s/AKfycbwrYdikZ8ce9ccQ2AjHU3jioXOIjyjWsPUKosUMlyq2taUjMb3-YNMjK0NOdVv5Ii6W/exec"
+                        class="btn-slanted border border-white bg-transparent"><span>MEMBER
+                            REGISTRATION</span></a>
                 </div>
-
-                <div
-                    class="tag-label absolute top-[-10%] md:top-[-10%] left-[5%] md:left-[0%] float-slow text-success border-2 border-success/50">
-                    <span class="bg-success/20 p-2 rounded-full text-lg">⏱️</span> 経過表作成に費やす時間：5時間 → 10分
-                </div>
-
-                <div
-                    class="tag-label absolute bottom-[-5%] md:bottom-[20%] left-[2%] md:left-[5%] float-medium text-red-600">
-                    <span class="bg-red-100 p-2 rounded-full text-lg">🚫</span> 図表の体裁崩れのストレス解消
-                </div>
-
-                <div
-                    class="tag-label absolute top-[0%] md:top-[25%] right-[30%] md:right-[0%] float-fast text-indigo-600">
-                    <span class="bg-indigo-100 p-2 rounded-full text-lg">💡</span> データアップロードだけで自動生成
-                </div>
-
-                <div
-                    class="tag-label absolute bottom-[0%] md:bottom-[-5%] right-[2%] md:right-[5%] float-slow text-pink-600">
-                    <span class="bg-pink-100 p-2 rounded-full text-lg">🏆</span> JPEG/SVGにカンタン出力
-                </div>
-
-                <div
-                    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] -z-10 opacity-60 pointer-events-none">
-                    <div
-                        class="absolute top-0 left-10 w-48 h-48 md:w-72 md:h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob">
-                    </div>
-                    <div
-                        class="absolute top-0 right-10 w-48 h-48 md:w-72 md:h-72 bg-primary/30 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000">
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-20 w-48 h-48 md:w-72 md:h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <section id="news" class="py-20 relative z-2 relative">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="news-section">
-                <h2>お知らせ・更新情報</h2>
-
-                <div class="news-list-wrapper">
-                    <!-- Update History -->
-                    <a href="#" class="news-item">
-                        <span class="news-date">2026-01-10</span>
-                        <span class="news-tag tag-info">Update</span>
-                        <span class="news-text">選択可能なフォントを40種類以上追加</span>
-                    </a>
-                    <a href="#" class="news-item">
-                        <span class="news-date">2025-12-30</span>
-                        <span class="news-tag tag-feature">New Feature</span>
-                        <span class="news-text">期間省略表示機能を追加</span>
-                    </a>
-                    <a href="#" class="news-item">
-                        <span class="news-date">2025-12-28</span>
-                        <span class="news-tag tag-info">Update</span>
-                        <span class="news-text">作業ファイルの複数保存を可能に</span>
-                    </a>
-                    <a href="#" class="news-item">
-                        <span class="news-date">2025-12-17</span>
-                        <span class="news-tag tag-feature">New Feature</span>
-                        <span class="news-text">データアップロード後，ブラウザ上で編集できる機能を追加</span>
-                    </a>
-                    <a href="#" class="news-item">
-                        <span class="news-date">2025-12-12</span>
-                        <span class="news-tag tag-feature">New Feature</span>
-                        <span class="news-text">SVG保存機能を追加</span>
-                    </a>
-                    <a href="#" class="news-item">
-                        <span class="news-date">2025-12-11</span>
-                        <span class="news-tag tag-info">Update</span>
-                        <span class="news-text">チャートエディタのUI強化・カラーパレットの刷新</span>
-                    </a>
-                    <a href="#" class="news-item">
-                        <span class="news-date">2025-12-10</span>
-                        <span class="news-tag tag-release">Release</span>
-                        <span class="news-text">経過表エディタ β版 公開</span>
-                    </a>
-                </div>
-
-
             </div>
         </div>
     </section>
 
-    <!-- How to Use Section -->
-    <section id="how-to-use" class="py-20 bg-bg relative z-20">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-heading font-bold text-text mb-4">4ステップで完成</h2>
-                <div class="w-16 h-1 bg-primary mx-auto rounded-full"></div>
-                <!-- <p class="mt-4 text-gray-600">経過表エディタの基本的な使い方を説明します</p> -->
-            </div>
-
-            <div class="space-y-12">
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                1
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">アップロード</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                左側のパネルから、3種類のCSVファイルをアップロードします。
-                            </p>
-                            <div class="bg-blue-50 p-4 rounded-lg space-y-3">
-                                <div class="flex items-start gap-3">
-                                    <span class="text-blue-500 text-xl">📊</span>
-                                    <div>
-                                        <strong class="text-blue-900">検査データ:</strong>
-                                        <p class="text-sm text-gray-600">形式: 日付, 検査項目名, 値</p>
-                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, WBC, 8500</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="text-purple-500 text-xl">💊</span>
-                                    <div>
-                                        <strong class="text-purple-900">処方データ:</strong>
-                                        <p class="text-sm text-gray-600">形式: 開始日, 終了日, 薬剤名, 用量</p>
-                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 2024-01-05, 抗生物質A, 500mg
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3">
-                                    <span class="text-orange-500 text-xl">🔬</span>
-                                    <div>
-                                        <strong class="text-orange-900">イベントデータ:</strong>
-                                        <p class="text-sm text-gray-600">形式: 日付, イベント名, 備考</p>
-                                        <p class="text-xs text-gray-500 mt-1">例: 2024-01-01, 血液培養, 入院時</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4 p-3 bg-green-50 border-l-4 border-green-500 rounded">
-                                <p class="text-sm text-green-800">
-                                    <strong>💡 ポイント:</strong> ブラウザ上でデータの編集を行うことも出来ます。編集途中のデータでも一時保存が可能です。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-purple-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                2
-                            </div>
-                        </div>
-                         <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">データの編集</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                各セクションで、後からデータの追加・編集・削除をすることが可能です。
-                            </p>
-                            <div class="space-y-3">
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">📈</span>
-                                    <div>
-                                        <strong class="text-orange-900">検査データ</strong>
-                                        <p class="text-sm text-gray-600">グラフの描画，複数段でのグラフ表示，軸範囲を個別に設定可能</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">💊</span>
-                                    <div>
-                                        <strong class="text-orange-900">処方</strong>
-                                        <p class="text-sm text-gray-600">複数種類の処方，内服量の漸減も細かく反映</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">🚩</span>
-                                    <div>
-                                        <strong class="text-orange-900">イベント</strong>
-                                        <p class="text-sm text-gray-600">重要なイベント（ex.エコー，生検）をマーカーで表示</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">📝</span>
-                                    <div>
-                                        <strong class="text-orange-900">フリーテキスト:</strong>
-                                        <p class="text-sm text-gray-600">任意の位置にテキストを配置可能</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                                    <span class="text-2xl">⋯</span>
-                                    <div>
-                                        <strong class="text-orange-900">その他</strong>
-                                        <p class="text-sm text-gray-600">ICU入室期間，バイオマーカーの閾値なども設定可能</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                3
-                            </div>
-                        </div>
-                                               <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">グラフ項目の設定</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                「全般設定」セクションで、グラフの表示を細かく調整できます。
-                            </p>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div class="bg-purple-50 p-4 rounded-lg">
-                                    <h4 class="font-bold text-purple-900 mb-2">基本設定</h4>
-                                    <ul class="text-sm text-gray-700 space-y-1">
-                                        <li>• タイトル・開始日の設定</li>
-                                        <li>• X軸ラベル・目盛り間隔</li>
-                                        <li>• グラフ幅・高さの調整</li>
-                                        <li>• 省略期間の設定</li>
-                                    </ul>
-                                </div>
-                                <div class="bg-purple-50 p-4 rounded-lg">
-                                    <h4 class="font-bold text-purple-900 mb-2">詳細設定</h4>
-                                    <ul class="text-sm text-gray-700 space-y-1">
-                                        <li>• フォント設定</li>
-                                        <li>• フォントサイズの一括調整</li>
-                                        <li>• 処方バーの位置設定</li>
-                                        <li>• 数直線の位置設定</li>
-
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition duration-300">
-                    <div class="flex items-start gap-6">
-                        <div class="flex-shrink-0">
-                            <div
-                                class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">
-                                4
-                            </div>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-2xl font-bold text-text mb-4">エクスポート</h3>
-                            <p class="text-gray-700 mb-4 leading-relaxed">
-                                完成した経過表を、用途に応じた形式でダウンロードできます。
-                            </p>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="text-2xl">🖼️</span>
-                                        <strong class="text-green-900">JPEG形式</strong>
-                                    </div>
-                                    <p class="text-sm text-gray-600">そのままプレゼン資料に貼り付けできる。</p>
-                                </div>
-                                <div class="p-4 border-2 border-green-200 rounded-lg hover:border-green-400 transition">
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="text-2xl">📐</span>
-                                        <strong class="text-green-900">SVG形式</strong>
-                                    </div>
-                                    <p class="text-sm text-gray-600">拡大しても画質が劣化しない。PowerPointで引き続き編集も可能。</p>
-                                </div>
-                            </div>
-                            <div class="mt-4 p-3 bg-blue-50 border-l-4 border-blue-500 rounded">
-                                <p class="text-sm text-blue-800">
-                                    <strong>💾 保存機能:</strong> 「一時保存」で作業内容を保存し、「続きから再開」で後から編集を再開できます。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+    <!-- News Section -->
+    <section class="py-24 bg-white" id="news">
+        <div class="container mx-auto px-8">
+            <div class="flex items-end justify-between mb-16 border-b-2 border-slate-900 pb-4">
+                <div>
+                    <h2 class="text-4xl font-black italic tracking-tighter flex items-center gap-4">
+                        <span class="w-12 h-[2px] bg-teal-500 block"></span>
+                        UPDATES
+                        <span class="text-sm font-normal not-italic tracking-widest opacity-50 ml-4">更新情報</span>
+                    </h2>
                 </div>
             </div>
 
-            <div class="mt-20"></div>
-            <h3 class="text-2xl font-bold text-center text-text mb-8 font-heading">経過表のサンプル</h3>
+            <div class="news-list-container space-y-0">
+                <a href="#" class="news-item py-6">
+                    <div class="news-date-box mr-8">2026.01.10</div>
+                    <div class="flex-grow">
+                        <span
+                            class="text-[10px] bg-cyan-100 px-2 py-0.5 rounded text-cyan-600 font-bold mr-2 uppercase">Update</span>
+                        <h3 class="text-lg font-bold">選択可能なフォントを40種類以上追加</h3>
+                    </div>
+
+                </a>
+                <a href="#" class="news-item py-6">
+                    <div class="news-date-box mr-8">2025.12.30</div>
+                    <div class="flex-grow">
+                        <span
+                            class="text-[10px] bg-emerald-100 px-2 py-0.5 rounded text-emerald-600 font-bold mr-2 uppercase">Feature</span>
+                        <h3 class="text-lg font-bold">期間省略表示機能を追加</h3>
+                    </div>
+
+                </a>
+                <a href="#" class="news-item py-6">
+                    <div class="news-date-box mr-8">2025.12.28</div>
+                    <div class="flex-grow">
+                        <span
+                            class="text-[10px] bg-cyan-100 px-2 py-0.5 rounded text-cyan-600 font-bold mr-2 uppercase">Update</span>
+                        <h3 class="text-lg font-bold">作業ファイルの複数保存を可能に</h3>
+                    </div>
+
+                </a>
+                <a href="#" class="news-item py-6">
+                    <div class="news-date-box mr-8">2025.12.17</div>
+                    <div class="flex-grow">
+                        <span
+                            class="text-[10px] bg-emerald-100 px-2 py-0.5 rounded text-emerald-600 font-bold mr-2 uppercase">Feature</span>
+                        <h3 class="text-lg font-bold">データアップロード後，ブラウザ上で編集できる機能を追加</h3>
+                    </div>
+
+                </a>
+                <a href="#" class="news-item py-6">
+                    <div class="news-date-box mr-8">2025.12.12</div>
+                    <div class="flex-grow">
+                        <span
+                            class="text-[10px] bg-emerald-100 px-2 py-0.5 rounded text-emerald-600 font-bold mr-2 uppercase">Feature</span>
+                        <h3 class="text-lg font-bold">SVG保存機能を追加</h3>
+                    </div>
+
+                </a>
+                <a href="#" class="news-item py-6">
+                    <div class="news-date-box mr-8">2025.12.11</div>
+                    <div class="flex-grow">
+                        <span
+                            class="text-[10px] bg-cyan-100 px-2 py-0.5 rounded text-cyan-600 font-bold mr-2 uppercase">Update</span>
+                        <h3 class="text-lg font-bold">チャートエディタのUI強化・カラーパレットの刷新</h3>
+                    </div>
+
+                </a>
+                <a href="#" class="news-item py-6">
+                    <div class="news-date-box mr-8">2025.12.10</div>
+                    <div class="flex-grow">
+                        <span
+                            class="text-[10px] bg-teal-100 px-2 py-0.5 rounded text-teal-600 font-bold mr-2 uppercase">Release</span>
+                        <h3 class="text-lg font-bold">経過表エディタ β版 公開</h3>
+                    </div>
+
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section: Why Choose Edita? -->
+    <section class="py-24 bg-slate-50 overflow-hidden" id="features">
+        <div class="container mx-auto px-8 relative">
             <div
-                class="max-w-3xl mx-auto shadow-2xl rounded-xl overflow-hidden border-4 border-white transform hover:scale-[1.01] transition duration-500">
-                <img src="sample.png" alt="経過表エディタの画面サンプル" class="w-full object-cover">
+                class="absolute top-0 right-0 text-[15rem] font-black opacity-[0.03] pointer-events-none select-none -translate-y-1/2 translate-x-1/4 uppercase italic">
+                Features
             </div>
 
-            <div class="mt-16 text-center">
-                <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
-                    target="_blank"
-                    class="inline-block btn-gradient text-white font-bold py-4 px-12 rounded-full transition duration-300 shadow-lg hover:shadow-xl">
-                    今すぐ使ってみる →
-                </a>
+            <div class="text-center mb-24">
+                <h2 class="text-5xl font-black italic tracking-tighter mb-4">WHY EDITA?</h2>
+                <div class="w-24 h-1 bg-teal-500 mx-auto"></div>
+                <p class="mt-8 text-slate-500 font-bold">学会発表・症例報告の時間を劇的に圧縮する、3つのコア・バリュー</p>
             </div>
-        </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div
+                    class="group relative bg-white overflow-hidden shadow-lg hover:-translate-y-2 transition duration-500">
+                    <div class="aspect-video bg-slate-200 relative">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop"
+                            alt="Upload"
+                            class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+                        <div
+                            class="absolute inset-0 bg-teal-900/40 opacity-0 group-hover:opacity-100 transition duration-500">
+                        </div>
+                        <div class="absolute top-4 left-4 bg-teal-500 text-white text-[10px] px-2 py-1 font-bold">01 /
+                            AUTOMATION</div>
+                    </div>
+                    <div class="p-8 relative">
+                        <div class="absolute -top-6 left-8 bg-white p-4 shadow-xl transform skew-x-[-10deg]">
+                            <span
+                                class="block transform skew-x-[10deg] font-black text-xl italic tracking-tighter uppercase">No
+                                Drag & Drop</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 mb-4 mt-4">ファイルをアップするだけ</h4>
+                        <p class="text-xs opacity-60 leading-relaxed">
+                            検査値から処方薬まで、CSVをアップロードすれば瞬時にプロット。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div
+                    class="group relative bg-white overflow-hidden shadow-lg hover:-translate-y-2 transition duration-500 lg:mt-12">
+                    <div class="aspect-video bg-slate-200 relative">
+                        <img src="https://images.unsplash.com/photo-1551288049-bbbda536639a?q=80&w=800&auto=format&fit=crop"
+                            alt="Edit"
+                            class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+                        <div
+                            class="absolute inset-0 bg-teal-900/40 opacity-0 group-hover:opacity-100 transition duration-500">
+                        </div>
+                        <div class="absolute top-4 left-4 bg-teal-500 text-white text-[10px] px-2 py-1 font-bold">02 /
+                            FLEXIBILITY</div>
+                    </div>
+                    <div class="p-8 relative">
+                        <div class="absolute -top-6 left-8 bg-white p-4 shadow-xl transform skew-x-[-10deg]">
+                            <span
+                                class="block transform skew-x-[10deg] font-black text-xl italic tracking-tighter uppercase">Custom
+                                Polish</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 mb-4 mt-4">自由自在なカスタマイズ</h4>
+                        <p class="text-xs opacity-60 leading-relaxed">
+                            処方の漸減、イベントマーカー、任意の位置へのテキスト配置。医学的解釈に必要な表現を網羅。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div
+                    class="group relative bg-white overflow-hidden shadow-lg hover:-translate-y-2 transition duration-500">
+                    <div class="aspect-video bg-slate-200 relative">
+                        <img src="https://images.unsplash.com/photo-1586717791821-3f44a563fc4c?q=80&w=800&auto=format&fit=crop"
+                            alt="Export"
+                            class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-700">
+                        <div
+                            class="absolute inset-0 bg-teal-900/40 opacity-0 group-hover:opacity-100 transition duration-500">
+                        </div>
+                        <div class="absolute top-4 left-4 bg-teal-500 text-white text-[10px] px-2 py-1 font-bold">03 /
+                            QUALITY</div>
+                    </div>
+                    <div class="p-8 relative">
+                        <div class="absolute -top-6 left-8 bg-white p-4 shadow-xl transform skew-x-[-10deg]">
+                            <span
+                                class="block transform skew-x-[10deg] font-black text-xl italic tracking-tighter uppercase">High
+                                Resolution</span>
+                        </div>
+                        <h4 class="font-bold text-slate-900 mb-4 mt-4">SVG形式での出力に対応</h4>
+                        <p class="text-xs opacity-60 leading-relaxed">
+                            拡大しても美しさが損なわれないSVG出力。PowerPointでの微調整もシームレスに行えます。
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
-    <section id="features" class="py-20 bg-white relative z-20">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-heading font-bold text-text mb-4">選ばれる理由：時間と手間からの解放</h2>
-                <div class="w-16 h-1 bg-primary mx-auto rounded-full"></div>
-            </div>
 
-            <div class="grid md:grid-cols-3 gap-12 text-center">
-                <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div
-                        class="w-20 h-20 bg-blue-50 text-blue-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-blue-100 transition">
-                        📥
+    <!-- How it Works: Step by Step -->
+    <section class="py-24 bg-white" id="how-to-use">
+        <div class="container mx-auto px-8">
+            <div class="grid lg:grid-cols-2 gap-24 items-center">
+                <div class="relative">
+                    <div class="absolute -inset-4 border-2 border-teal-500 transform -rotate-2"></div>
+                    <img src="sample.png" alt="Dashboard" class="rounded-lg shadow-2xl relative z-10 rotate-1">
+                    <!-- Slanted tag for Edita -->
+                    <div class="absolute -bottom-8 -right-8 bg-teal-500 text-white p-8 shadow-2xl skew-x-[-15deg]">
+                        <div class="skew-x-[15deg]">
+                            <p class="text-3xl font-black italic">10 MINS.</p>
+                            <p class="text-[10px] tracking-widest font-bold opacity-80 uppercase">Average Creation Time
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">ファイルをアップするだけ</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        検査値から処方薬まで。<br>
-                        ファイルをアップすれば、瞬時にグラフが出来ます。
-                    </p>
                 </div>
-
-                <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div
-                        class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-orange-100 transition">
-                        🎨
+                <div>
+                    <h3 class="text-4xl font-black italic mb-12 tracking-tighter">4 STEPS TO GO.</h3>
+                    <div class="space-y-12">
+                        <div class="flex gap-8 group">
+                            <span
+                                class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">01</span>
+                            <div>
+                                <h4 class="font-black text-xl mb-4 italic">UPLOAD DATA</h4>
+                                <p class="text-sm text-slate-500 leading-relaxed">
+                                    検査値、処方、イベント。お持ちのCSVデータを読み込ませるだけ。自動的に時間軸が設定されます。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-8 group">
+                            <span
+                                class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">02</span>
+                            <div>
+                                <h4 class="font-black text-xl mb-4 italic">EDIT & POLISH</h4>
+                                <p class="text-sm text-slate-500 leading-relaxed">
+                                    項目の並び替えやグラフの表示範囲の調整を直感的に。一時保存機能で、後からの再開もスムーズです。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-8 group">
+                            <span
+                                class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">03</span>
+                            <div>
+                                <h4 class="font-black text-xl mb-4 italic">CONFIG SETTINGS</h4>
+                                <p class="text-sm text-slate-500 leading-relaxed">
+                                    フォント、カラー、サイズ。発表のスタイルに合わせて一括設定。<br>プレゼンの質を引き上げます。</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-8 group">
+                            <span
+                                class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">04</span>
+                            <div>
+                                <h4 class="font-black text-xl mb-4 italic">EXPORT</h4>
+                                <p class="text-sm text-slate-500 leading-relaxed">
+                                    JPEGまたはSVG形式でエクスポート。学会スライド、論文、カンファレンス。あらゆるシーンに対応します。</p>
+                            </div>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">思いのままに編集</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        表示設定や期間、イベント注釈を直感的なUIで調整。<br>
-                        こだわりの一枚が作れます。
-                    </p>
-                </div>
-
-                <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div
-                        class="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-pink-100 transition">
-                        🚀
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">高速な出力</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        作成した経過表は高品質のSVGやJPEGとして保存。<br>
-                        そのままプレゼン資料に貼り付け可能です。
-                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-
-    <!-- <section class="py-20 bg-white relative z-20">
-        <div class="max-w-6xl mx-auto px-6">
-
-
-            <div class="grid md:grid-cols-3 gap-12 text-center">
-                <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div
-                        class="w-20 h-20 bg-green-50 text-success rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-green-100 transition">
-                        📊
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">グラフの自動生成</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        作成に時間がかかるグラフも、統計データをインポートするだけで即座に完成します。
-                    </p>
-                </div>
-
-                <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div
-                        class="w-20 h-20 bg-orange-50 text-orange-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-orange-100 transition">
-                        🛡️
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">医学誌の基準に自動準拠</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        煩わしい投稿規定（フォント、解像度、色使い）をアプリが自動で最適化。体裁のチェック作業から解放されます。
-                    </p>
-                </div>
-
-                <div class="p-6 group hover:-translate-y-2 transition duration-300">
-                    <div
-                        class="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center text-4xl mx-auto mb-6 shadow-sm group-hover:bg-pink-100 transition">
-                        ⚡
-                    </div>
-                    <h3 class="text-xl font-bold mb-3 text-text">高速な最終出力</h3>
-                    <p class="text-gray-600 leading-relaxed">
-                        調整が終わったら、高品質のSVG/JPEGファイルを瞬時に出力。発表資料への組み込みがスムーズに行えます。
-                    </p>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white py-16">
+        <div class="container mx-auto px-8 grid md:grid-cols-4 gap-12">
+            <div class="col-span-1 md:col-span-2">
+                <div class="font-black text-3xl tracking-tighter mb-4 italic">Medi Plot</div>
+                <p class="text-sm opacity-50 max-w-sm mb-8">
+                    医療従事者のための、自動化された臨床経過表作成ツール。<br>
+                    複雑な作業から解放され、より重要なデータ解析と発表の準備に集中を。
+                </p>
+                <div class="flex gap-4">
+                    <a href="https://forms.gle/op263tKbMSaEzgc28" target="_blank"
+                        class="btn-slanted bg-teal-500 text-xs px-6 py-3"><span>JOIN US NOW</span></a>
                 </div>
             </div>
+            <div>
+                <h4 class="font-bold text-teal-400 mb-6 uppercase tracking-widest text-xs">Platform</h4>
+                <ul class="space-y-4 text-sm opacity-70">
+                    <li><a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
+                            target="_blank" class="hover:text-white transition">Web App Login</a></li>
+                    <li><a href="#how-to-use" class="hover:text-white transition">User Guide</a></li>
+                    <li><a href="https://script.google.com/macros/s/AKfycbwrYdikZ8ce9ccQ2AjHU3jioXOIjyjWsPUKosUMlyq2taUjMb3-YNMjK0NOdVv5Ii6W/exec"
+                            target="_blank" class="hover:text-white transition">Beta Access</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-teal-400 mb-6 uppercase tracking-widest text-xs">Company</h4>
+                <ul class="space-y-4 text-sm opacity-70">
+                    <li><a href="https://script.google.com/macros/s/AKfycbzFnMWq_MSaZfhYPA6mQzuS1xFBYz06Se-8t7iAH4lmWo_ijujqjuL-U8mkyeJN79KZ/exec"
+                            target="_blank" class="hover:text-white transition">About Edita</a></li>
+                    <li><a href="https://script.google.com/macros/s/AKfycbzFnMWq_MSaZfhYPA6mQzuS1xFBYz06Se-8t7iAH4lmWo_ijujqjuL-U8mkyeJN79KZ/exec"
+                            target="_blank" class="hover:text-white transition">Contact Support</a></li>
+                </ul>
+            </div>
         </div>
-    </section> -->
-
-    <footer class="bg-bg py-16 text-center border-t border-orange-100">
-        <div class="max-w-4xl mx-auto px-6">
-            <h2 class="text-2xl md:text-3xl font-heading font-bold mb-8 text-text">
-                医師が、臨床に集中できる未来へ。
-            </h2>
-            <a href="https://script.google.com/macros/s/AKfycbwHWYZM7dKfq9IWS850EGayRdU8LUXn8nPNdXY6S5OEg9caPHEiVllTkq6fhzxxb1Oi/exec"
-                class="inline-block btn-gradient text-white font-bold py-3 px-10 rounded-full transition duration-300 shadow-md hover:shadow-lg">
-                トライアルを始める
-            </a>
-            <p class="mt-12 text-xs text-gray-400 font-sans">
-                <small>&copy; 2026 Ryuhei Aoyama.</small>
-            </p>
+        <div
+            class="container mx-auto px-8 mt-16 pt-8 border-t border-white/10 flex justify-between items-center text-[10px] opacity-30">
+            <div>© 2026 MediPlot EDITOR BY EDITA. ALL RIGHTS RESERVED.</div>
+            <!-- <div>DESIGN INSPIRED BY SHIGAKOGEN-SKI.OR.JP</div> -->
         </div>
     </footer>
 
-    <!-- Back to Top Button -->
-    <img id="back-to-top" src="./home.png" alt="Back to Top"
-        class="fixed bottom-8 right-8 w-32 h-32 z-50 cursor-pointer opacity-0 pointer-events-none transition-opacity duration-300 animate-float shadow-lg rounded-full border-4 border-white hover:opacity-80 nav-hidden">
-
     <script>
-        const backToTopBtn = document.getElementById('back-to-top');
-
+        // Transparent to solid header on scroll
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.remove('opacity-0', 'pointer-events-none');
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('bg-slate-900/90', 'backdrop-blur-md', 'py-4');
+                header.classList.remove('py-6');
             } else {
-                backToTopBtn.classList.add('opacity-0', 'pointer-events-none');
+                header.classList.remove('bg-slate-900/90', 'backdrop-blur-md', 'py-4');
+                header.classList.add('py-6');
             }
         });
-
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-
-        // ハンバーガーメニュー
-        const hamburger = document.getElementById('hamburger');
-        const mobileNav = document.getElementById('mobileNav');
-        const mobileOverlay = document.getElementById('mobileOverlay');
-        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-
-        function toggleMenu() {
-            hamburger.classList.toggle('active');
-            mobileNav.classList.toggle('active');
-            mobileOverlay.classList.toggle('active');
-            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
-        }
-
-        hamburger.addEventListener('click', toggleMenu);
-        mobileOverlay.addEventListener('click', toggleMenu);
-
-        // メニュー項目をクリックしたらメニューを閉じる
-        mobileNavLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (!link.hasAttribute('target')) {
-                    toggleMenu();
-                }
-            });
-        });
     </script>
-
 </body>
 
 </html>
