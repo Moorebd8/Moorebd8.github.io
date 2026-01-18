@@ -400,7 +400,7 @@
             <div class="text-center mb-24">
                 <h2 class="text-5xl font-black italic tracking-tighter mb-4">WHY EDITA?</h2>
                 <div class="w-24 h-1 bg-teal-500 mx-auto"></div>
-                <p class="mt-8 text-slate-500 font-bold">学会発表・症例報告の準備時間を劇的に圧縮する、3つのコア・バリュー</p>
+                <p class="mt-8 text-slate-500 font-bold">エディ太が提供する3つのコア・バリュー</p>
             </div>
 
             <div class="grid md:grid-cols-3 gap-8">
@@ -492,7 +492,15 @@
             <div class="grid lg:grid-cols-2 gap-24 items-center">
                 <div class="relative">
                     <div class="absolute -inset-4 border-2 border-teal-500 transform -rotate-2"></div>
-                    <img src="sample.png" alt="Dashboard" class="rounded-lg shadow-2xl relative z-10 rotate-1">
+                    <!-- <img src="sample.png" alt="Dashboard" class="rounded-lg shadow-2xl relative z-10 rotate-1"> -->
+                    <div class="rounded-lg shadow-2xl relative z-10 rotate-1 overflow-hidden">
+                        <!-- Default/Step 1 Image -->
+                        <img id="step-image" src="sample.png" alt="Dashboard"
+                            class="w-full h-auto block transition-opacity duration-300">
+                        <!-- Step 2-4 Video -->
+                        <video id="step-video" muted loop playsinline
+                            class="w-full h-auto block hidden transition-opacity duration-300"></video>
+                    </div>
                     <!-- Slanted tag for Edita -->
                     <div class="absolute -bottom-8 -right-8 bg-teal-500 text-white p-8 shadow-2xl skew-x-[-15deg]">
                         <div class="skew-x-[15deg]">
@@ -504,8 +512,8 @@
                 </div>
                 <div>
                     <h3 class="text-4xl font-black italic mb-12 tracking-tighter">4 STEPS TO GO.</h3>
-                    <div class="space-y-12">
-                        <div class="flex gap-8 group">
+                    <div class="space-y-12" id="steps-container">
+                        <div class="flex gap-8 group step-item cursor-pointer" data-step="1">
                             <span
                                 class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">01</span>
                             <div>
@@ -514,7 +522,9 @@
                                     検査値、処方、イベント。お持ちのCSVデータを読み込ませるだけ。自動的に時間軸が設定されます。</p>
                             </div>
                         </div>
-                        <div class="flex gap-8 group">
+                        
+                        <div class="flex gap-8 group step-item cursor-pointer" data-step="2">
+
                             <span
                                 class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">02</span>
                             <div>
@@ -523,7 +533,9 @@
                                     項目の並び替えやグラフの表示範囲の調整を直感的に。一時保存機能で、後からの再開もスムーズです。</p>
                             </div>
                         </div>
-                        <div class="flex gap-8 group">
+                       
+                        <div class="flex gap-8 group step-item cursor-pointer" data-step="3">
+
                             <span
                                 class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">03</span>
                             <div>
@@ -532,7 +544,9 @@
                                     フォント、カラー、サイズ。発表のスタイルに合わせて一括設定。<br>プレゼンの質を引き上げます。</p>
                             </div>
                         </div>
-                        <div class="flex gap-8 group">
+                        
+                        <div class="flex gap-8 group step-item cursor-pointer" data-step="4">
+
                             <span
                                 class="text-5xl font-black text-teal-100 group-hover:text-teal-500 transition duration-300">04</span>
                             <div>
@@ -613,6 +627,48 @@
         }
 
         hamburger.addEventListener('click', toggleMenu);
+
+        
+        // 4 Steps Hover Effect
+        const stepItems = document.querySelectorAll('.step-item');
+        const stepImage = document.getElementById('step-image');
+        const stepVideo = document.getElementById('step-video');
+
+        stepItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                const step = item.getAttribute('data-step');
+
+                // Add active state styling to the number if needed, 
+                // but for now just handling the media switch
+
+                if (step === '1') {
+                    // Show Image
+                    stepVideo.classList.add('hidden');
+                    stepImage.classList.remove('hidden');
+                    // Update source if specifically requested to be 1.png, 
+                    // though sample.png might be the better default. 
+                    // User said: "01にマウスを当てた時→1.pngが表示される"
+                    stepImage.src = 'movie/1.png';
+                    stepVideo.pause();
+                } else {
+                    // Show Video
+                    stepImage.classList.add('hidden');
+                    stepVideo.classList.remove('hidden');
+                    stepVideo.src = `movie/${step}.mov`;
+                    stepVideo.play().catch(e => console.error("Video play failed:", e));
+                }
+            });
+        });
+
+        // Revert to default when leaving the steps container
+        const stepsContainer = document.getElementById('steps-container');
+        stepsContainer.addEventListener('mouseleave', () => {
+            // Show Default Image (sample.png)
+            stepVideo.classList.add('hidden');
+            stepVideo.pause();
+            stepImage.classList.remove('hidden');
+            stepImage.src = 'sample.png';
+        });
     </script>
 </body>
 
