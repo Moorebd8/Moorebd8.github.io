@@ -297,6 +297,62 @@
             </div>
         </div>
     </section>
+    <div class="mt-28 relative">
+        <!-- Section label -->
+        <!-- <div class="text-center mb-12">
+                    <span
+                        class="inline-block text-teal-600 font-bold tracking-widest text-xs border-b-2 border-teal-400 pb-1">POWERED
+                        BY EDITA</span>
+                    <h3 class="text-3xl font-black italic tracking-tighter mt-3 text-slate-800">実際のエディタ画面</h3>
+                </div> -->
+
+        <!-- Glow backdrop -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none"
+            style="filter: blur(80px); opacity: 0.35;">
+            <div
+                style="width: 70%; height: 60%; background: radial-gradient(ellipse at center, #00A7B1 0%, transparent 70%);">
+            </div>
+        </div>
+
+        <!-- Browser chrome mockup -->
+        <div class="relative mx-auto max-w-5xl" style="
+                    background: #1e293b;
+                    border-radius: 12px;
+                    box-shadow: 0 40px 100px -20px rgba(0,167,177,0.3), 0 30px 60px rgba(0,0,0,0.4);
+                    transform: perspective(1200px) rotateX(3deg);
+                    transition: transform 0.5s ease;
+                " onmouseenter="this.style.transform='perspective(1200px) rotateX(0deg)'"
+            onmouseleave="this.style.transform='perspective(1200px) rotateX(3deg)'">
+            <!-- Browser top bar -->
+            <div class="flex items-center gap-2 px-4 py-3 border-b border-white/10">
+                <span style="width:12px;height:12px;border-radius:50%;background:#ff5f57;display:inline-block;"></span>
+                <span style="width:12px;height:12px;border-radius:50%;background:#febc2e;display:inline-block;"></span>
+                <span style="width:12px;height:12px;border-radius:50%;background:#28c840;display:inline-block;"></span>
+                <div class="flex-1 mx-4">
+                    <div
+                        class="bg-white/10 rounded-md text-white/40 text-xs text-center py-1 px-3 font-mono tracking-wide">
+                        Find your magic.
+                    </div>
+                </div>
+                <!-- Teal accent line -->
+                <div class="w-1 h-4 bg-teal-500 rounded-full opacity-80"></div>
+            </div>
+            <!-- Screenshot -->
+            <div class="overflow-hidden" style="border-radius: 0 0 12px 12px;">
+                <img src="edit-sample.png" alt="Medi Plot Editor Interface" class="w-full h-auto block"
+                    style="display:block;">
+            </div>
+        </div>
+
+        <!-- Bottom accent badge -->
+        <div class="flex justify-center mt-8">
+            <div class="inline-flex items-center gap-3 bg-slate-900 text-white px-6 py-3 text-sm font-bold"
+                style="clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);">
+                <span class="w-2 h-2 rounded-full bg-teal-400 animate-pulse inline-block"></span>
+                直感的なUI / リアルタイムプレビュー
+            </div>
+        </div>
+    </div>
 
     <!-- News Section -->
     <section class="py-24 bg-white" id="news">
@@ -399,8 +455,9 @@
             <div class="text-center mb-24">
                 <h2 class="text-5xl font-black italic tracking-tighter mb-4">WHY EDITA?</h2>
                 <div class="w-24 h-1 bg-teal-500 mx-auto"></div>
-                <p class="mt-8 text-slate-500 font-bold">3つのコア・バリュー</p>
+
             </div>
+
 
             <div class="grid md:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
@@ -421,7 +478,7 @@
                             </h3>
                             <h4 class="font-bold text-slate-800 mb-4 text-lg">ファイルをアップするだけ</h4>
                             <p class="text-sm opacity-60 leading-relaxed font-medium">
-                                検査値から処方、イベントまで、<br>CSVをアップロードすれば瞬時にプロット。<br>面倒な手入力から解放されます。
+                                検査値から処方、イベントまで、<br>データをアップロードすれば瞬時にプロット。<br>面倒な手入力から解放されます。
                             </p>
                         </div>
                     </div>
@@ -444,7 +501,7 @@
                             </h3>
                             <h4 class="font-bold text-slate-800 mb-4 text-lg">自由自在なカスタマイズ</h4>
                             <p class="text-sm opacity-60 leading-relaxed font-medium">
-                                処方の漸減、イベントマーカー、任意の位置へのテキスト配置。<br>漏れなく入院経過を表現できます。
+                                処方の漸減、イベントマーカー、任意の位置へのテキスト配置。<br>入院経過のすべてを表現できます。
                             </p>
                         </div>
                     </div>
@@ -465,14 +522,18 @@
                                 <span
                                     class="absolute bottom-1 left-0 w-full h-3 bg-teal-100 -skew-x-12 -z-0 transition-colors"></span>
                             </h3>
-                            <h4 class="font-bold text-slate-800 mb-4 text-lg">SVG形式での出力に対応</h4>
+                            <h4 class="font-bold text-slate-800 mb-4 text-lg">様々な出力形式に対応</h4>
                             <p class="text-sm opacity-60 leading-relaxed font-medium">
-                                拡大しても美しさを損なわないSVG出力。<br>PowerPointでの微調整もシームレス。<br>論文投稿にも最適です。
+                                PNG/JPEG/TIFF/SVG出力の全てが可能。<br>SVG形式出力ではPowerPointでの微調整もシームレス。<br>論文投稿にも最適です。
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- App Preview Mockup -->
+
+
         </div>
     </section>
 
@@ -508,7 +569,7 @@
                             <div>
                                 <h4 class="font-black text-xl mb-4 italic">UPLOAD DATA</h4>
                                 <p class="text-sm text-slate-500 leading-relaxed">
-                                    検査値、処方、イベント。お持ちのCSVデータを読み込ませるだけ。自動的に時間軸が設定されます。</p>
+                                    検査値、処方、イベント。お持ちのデータを読み込ませるだけ。自動的に時間軸が設定されます。</p>
                             </div>
                         </div>
                         <div class="flex gap-8 group step-item cursor-pointer" data-step="2">
