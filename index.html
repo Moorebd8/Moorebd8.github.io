@@ -225,7 +225,7 @@ const About = () => {
             {[
               ['現在地', '初期臨床研修医（JIHS）'],
               ['研究領域', '公衆衛生・NLP・計算論的神経科学'],
-              ['資格', '医師免許・統計検定1級・HSK5級（中国語検定）'],
+              ['資格', '医師免許・統計検定1級（最優秀成績賞）・HSK5級'],
               ['言語', '日本語・英語・中国語（CEFR C1レベル）'],
               ['E-mail', 'ryuhei.aoyama@quadka.com'],
             ].map(([k, v]) => (
@@ -265,7 +265,7 @@ const AnatomAI = () => {
           gap: isMobile ? '12px' : '2px'
         }}>
           {[
-            { label: 'Google Cloud Japan\nAgentic AI Hackathon', val: '最優秀賞受賞', sub: '880エントリーから選抜200チーム枠', c: C.blueD },
+            { label: 'Google Cloud Japan\nAgentic AI Hackathon', val: '最優秀賞受賞', sub: '880エントリー→200チーム→優勝', c: C.blueD },
             { label: '創業チーム', val: '4名体制', sub: 'CEO / CTO / CFO / COO', c: '#444' },
             { label: '知的財産', val: '特許出願中', sub: '自然言語→3D操作アーキテクチャ', c: '#444' },
           ].map((item, i) => (
@@ -304,8 +304,8 @@ const Works = () => {
     }, {
       tag: '株式会社プレシジョン', year: '2023–2025',
       title: '医師国家試験向け医療LLM 研究',
-      desc: '研究協力者として、医師国家試験に向けた医療LLMのデータセット構築・学習方法研究に2年間従事。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
-      note: '研究協力者として2年間従事', c: C.orange, link: null
+      desc: '研究協力者として、医師国家試験に向けた医療LLMのデータセット構築・学習方法研究に2年間従事。その他にも，AI医療機器のKPI設定等に参画。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
+      note: '2年間', c: C.orange, link: null
     }
   ];
   return (
@@ -385,16 +385,17 @@ const Academic = () => {
   const presentations = [
     '自然言語処理解析で見るCOVID-19業種別ガイドラインの現状',
     '大規模マルチモーダル言語モデルによる認知症の言語症状の再現',
-    'NLP2025（言語処理学会）共著発表（山越氏ら）',
-    '内科地方会 演題賞（発表3件受賞）',
+    'NLP2025（言語処理学会）筆頭著者発表',
+    '内科地方会など学会での受賞歴多数',
   ];
   const awards = [
-    { y: '2026', t: 'Google Cloud Japan Agentic AI Hackathon 最優秀賞受賞（880エントリーから選抜200チーム枠）' },
+    { y: '2026', t: 'Google Cloud Japan Agentic AI Hackathon 最優秀賞受賞（880エントリー中1位）' },
     { y: '2024', t: '東京都医師会 論文大賞 優秀賞（令和6年度）' },
     { y: '2025', t: '医師免許取得' },
-    { y: '2023', t: '統計検定1級' },
+    { y: '2025', t: 'HSK5級（中国語検定）' },
+    { y: '2023', t: '統計検定1級・最優秀成績賞' },
     { y: '2022', t: '学生ハッカソン 準優勝' },
-    { y: '—', t: 'HSK5級（中国語検定）' },
+    
   ];
   return (
     <section style={{ background: C.gray, padding: isMobile ? '72px 0' : '100px 0' }}>
