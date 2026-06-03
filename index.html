@@ -212,7 +212,8 @@ const About = () => {
         }}>
           <div data-fade style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <p style={{ ...s(isMobile ? '15px' : '17px', 300), lineHeight: 1.8 }}>
-              医師として臨床現場に立ちながら、自然言語で3D解剖学アトラスを操作するAI——Anatom-AIを共同創業。学生時代より世界経済フォーラム（WEF）日本センターにて、医療データガバナンスと地域医療課題に約2年9ヶ月従事し、国際的な政策実装の現場を経験した。また，東京大学の臨床疫学・経済学教室では，特任研究員として，臨床系四大国際誌の一つであるJAMA誌のopen access誌に筆頭著者で論文を発表。同年，東京都医師会の論文大賞でも優秀賞を受賞した。
+              医師として臨床現場に立ちながら、自然言語で3D解剖学アトラスを操作するAI——Anatom-AIを共同創業。
+              \n 学生時代より世界経済フォーラム（WEF）日本センターにて、医療データガバナンスと地域医療課題に約2年9ヶ月従事し、国際的な政策実装の現場を経験した。また，東京大学の臨床疫学・経済学教室では，特任研究員として，臨床系四大国際誌の一つであるJAMA誌のopen access誌に筆頭著者で論文を発表。同年，東京都医師会の論文大賞でも優秀賞を受賞した。
             </p>
             <p style={{ ...s(isMobile ? '15px' : '17px', 300), lineHeight: 1.8 }}>
               技術面においては，医療AI企業・株式会社プレシジョンで、研究協力者として医師国家試験向け医療LLMの研究に2年間携わった経験がある。LLMについての知見を日々集めている。
@@ -300,12 +301,12 @@ const Works = () => {
       tag: '世界経済フォーラム C4IRJ', year: '2020–2023',
       title: '医療データガバナンス・地域医療DX',
       desc: 'DFFT準拠の医療データ活用フロー開発、ツールキット作成・モデル自治体導入。医療過疎地デマンドバス運行計画（購買×移動データ解析）、医療AI企業インタビュー調査。',
-      note: '約2年9ヶ月、国際的政策実装プラットフォーム', c: C.green, link: null
+      note: '国際的政策実装プラットフォームにて産官連携を経験', c: C.green, link: null
     }, {
       tag: '株式会社プレシジョン', year: '2023–2025',
       title: '医師国家試験向け医療LLM 研究',
       desc: '研究協力者として、医師国家試験に向けた医療LLMのデータセット構築・学習方法研究に2年間従事。その他にも，AI医療機器のKPI設定等に参画。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
-      note: '2年間', c: C.orange, link: null
+      note: '医療スタートアップにて民間企業の視点を経験', c: C.orange, link: null
     }
   ];
   return (
@@ -384,10 +385,10 @@ const Timeline = () => {
 const Academic = () => {
   const isMobile = useIsMobile();
   const presentations = [
-    '自然言語処理解析で見るCOVID-19業種別ガイドラインの現状',
-    '大規模マルチモーダル言語モデルによる認知症の言語症状の再現',
+    '"自然言語処理解析で見るCOVID-19業種別ガイドラインの現状"',
+    '"大規模マルチモーダル言語モデルによる認知症の言語症状の再現"',
     'NLP2025（言語処理学会）筆頭著者発表',
-    '内科地方会など学会での受賞歴多数',
+    '研修医1年次，内科地方会を始めとして優秀賞を3度受賞',
   ];
   const awards = [
     { y: '2026', t: 'Google Cloud Japan Agentic AI Hackathon 最優秀賞（880エントリー中1位）' },
@@ -409,7 +410,7 @@ const Academic = () => {
           <div>
             <h2 data-fade style={{ ...s('clamp(22px,4.5vw,36px)', 700), letterSpacing: '-0.012em', marginBottom: isMobile ? '24px' : '32px' }}>論文・発表</h2>
             <div data-fade style={{ padding: '24px 0', borderBottom: `1px solid ${C.border}`, marginBottom: '8px' }}>
-              <span style={{ ...s('12px', 600, C.blue) }}>2024 — 査読付き原著論文</span>
+              <span style={{ ...s('12px', 600, C.blue) }}>査読付き原著論文</span>
               <p style={{ ...s(isMobile ? '14px' : '15px', 700), margin: '8px 0 5px', lineHeight: 1.5, letterSpacing: '-.005em' }}>
                 Clinic Characteristics and Antibiotic Prescribing for Acute Respiratory Infections in Japan
               </p>
@@ -423,16 +424,16 @@ const Academic = () => {
               </a>
             </div>
             <div data-fade style={{ padding: '20px 0', borderBottom: `1px solid ${C.border}`, marginBottom: '8px' }}>
-              <span style={{ ...s('12px', 600, C.sec) }}>受賞論文</span>
+              <span style={{ ...s('12px', 600, C.blue) }}>受賞論文</span>
               <p style={{ ...s(isMobile ? '14px' : '15px', 500), margin: '6px 0 5px', lineHeight: 1.5 }}>医療を再考する——社会的見地と技術革新から。</p>
               <p style={{ ...s('13px', 300, C.sec) }}>令和6年度 東京都医師会 論文大賞 優秀賞</p>
             </div>
-            <h3 data-fade style={{ ...s('11px', 600, C.sec), letterSpacing: '.07em', margin: '24px 0 12px', textTransform: 'uppercase' }}>学会・口頭発表</h3>
+            <h3 data-fade style={{ ...s('11px', 600, C.sec), letterSpacing: '.07em', margin: '24px 0 12px', textTransform: 'uppercase' }}>学会発表</h3>
             {presentations.map((p, i) => (
               <p data-fade key={i} style={{ ...s('13px', 300), lineHeight: 1.7, padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>{p}</p>
             ))}
             <p data-fade style={{ ...s('13px', 300), lineHeight: 1.7, padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>
-              査読：<em>Journal of General Internal Medicine</em>（医師の性別と患者アウトカム）
+              査読歴：<em>Annals of Internal Medicine</em>
             </p>
           </div>
           <div>
