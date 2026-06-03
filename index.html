@@ -18,10 +18,15 @@
     /* hide horizontal scrollbar on nav menu */
     .nav-menu::-webkit-scrollbar { display: none; }
     .nav-menu { -ms-overflow-style: none; scrollbar-width: none; }
+    /* hero headline entrance (driven by React state + transition; see Hero) */
+    @media (prefers-reduced-motion: reduce) {
+      .hero-rise { transition: none !important; opacity: 1 !important; transform: none !important; }
+    }
   </style>
 </head>
 <body>
 <div id="root"></div>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
 <script type="text/babel">
 
 
@@ -37,6 +42,22 @@ const C = {
 };
 const s = (size, weight = 400, color = C.text, extra = {}) =>
   ({ fontFamily: F, fontSize: size, fontWeight: weight, color, ...extra });
+
+/* "#2997FF" → "41,151,255" for rgba() composition on canvas */
+const hexRGB = (hex) => {
+  const h = String(hex).replace('#', '');
+  const n = parseInt(h.length === 3 ? h.replace(/./g, c => c + c) : h, 16);
+  return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`;
+};
+
+/* tweakable defaults — host rewrites this block on change */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "bgStyle": "helix",
+  "motion": 6,
+  "accent": "#2997FF",
+  "grain": true,
+  "eyebrow": false
+}/*EDITMODE-END*/;
 
 /* breakpoint hook ── true under 760px */
 const useIsMobile = (bp = 760) => {
@@ -66,54 +87,237 @@ const useFade = () => useEffect(() => {
   return () => obs.disconnect();
 }, []);
 
-/* neural-net canvas */
-const NetworkBg = () => {
+/* ── HERO BACKGROUND ──────────────────────────────────────────────
+   「医療を再考する——社会的見地と技術革新から。」
+   A single layered field that reads as society + technology converging:
+     · particle constellation  → 社会のつながり (a network of people/nodes)
+     · DNA double helix         → 生命と技術 — flows across center as a bridge
+     · traveling light pulse    → 鼓動 / heartbeat sweeping the helix
+     · gentle concentric rings  → impact rippling outward (点滅は控えめ)
+   Black ground · white + #2997FF · seamless loop · reduced-motion aware. */
+const NetworkBg = ({ bgStyle = 'full', accent = '#2997FF', motion = 4 }) => {
   const ref = useRef(null);
   useEffect(() => {
     const c = ref.current; if (!c) return;
-    const resize = () => { c.width = c.offsetWidth || window.innerWidth; c.height = c.offsetHeight || window.innerHeight; };
-    resize(); window.addEventListener('resize', resize);
     const ctx = c.getContext('2d');
-    const count = window.innerWidth < 760 ? 24 : 40;
-    const pts = Array.from({ length: count }, () => ({
-      x: Math.random() * c.width, y: Math.random() * c.height,
-      vx: (Math.random() - .5) * .38, vy: (Math.random() - .5) * .38
-    }));
-    let raf;
-    const draw = () => {
-      ctx.clearRect(0, 0, c.width, c.height);
-      pts.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > c.width) p.vx *= -1;
-        if (p.y < 0 || p.y > c.height) p.vy *= -1;
-      });
-      pts.forEach((a, i) => pts.slice(i + 1).forEach(b => {
-        const d = Math.hypot(a.x - b.x, a.y - b.y);
-        if (d < 135) {
-          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(255,255,255,${.055 * (1 - d / 135)})`; ctx.lineWidth = .8; ctx.stroke();
-        }
-      }));
-      pts.forEach(p => {
-        ctx.beginPath(); ctx.arc(p.x, p.y, 1.6, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.28)'; ctx.fill();
-      });
-      raf = requestAnimationFrame(draw);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const A = hexRGB(accent);
+    const spd = motion / 5;                              // 1 = baseline tempo
+    let W = 0, H = 0, mobile = false;
+    const resize = () => {
+      W = c.offsetWidth || window.innerWidth;
+      H = c.offsetHeight || window.innerHeight;
+      mobile = W < 760;
+      c.width = W * dpr; c.height = H * dpr;
+      c.style.width = W + 'px'; c.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-    draw();
+    resize();
+    window.addEventListener('resize', resize);
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches || spd === 0;
+    const aurora = bgStyle === 'aurora';
+    const showParticles = bgStyle === 'full' || bgStyle === 'particles' || aurora;
+    const showHelix = bgStyle === 'full' || bgStyle === 'helix';
+    const showRings = bgStyle === 'full';
+
+    // depth-varied particle field — 社会のネットワーク
+    const count = bgStyle === 'particles' ? (mobile ? 26 : 50) : (mobile ? 18 : 34);
+    const pts = Array.from({ length: count }, () => ({
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - .5) * .22, vy: (Math.random() - .5) * .22,
+      r: 0.6 + Math.random() * 1.7,                     // size = depth
+      o: 0.09 + Math.random() * 0.16
+    }));
+    // slow aurora blobs
+    const blobs = Array.from({ length: 3 }, (_, i) => ({
+      x: W * (0.30 + 0.20 * i), y: H * (0.42 + (i % 2 ? 0.14 : -0.12)),
+      r: Math.min(W, H) * (0.34 + 0.07 * i),
+      px: Math.random() * 6.28, py: Math.random() * 6.28,
+      sx: 0.05 + Math.random() * 0.05, sy: 0.04 + Math.random() * 0.05
+    }));
+
+    let rings = [], lastRing = -99;
+    const TAU = Math.PI * 2;
+    // stable pseudo-random in [0,1) — lets node x-positions jitter per crest
+    // deterministically (resize-safe, no stored arrays)
+    const hash = (n) => { const v = Math.sin(n * 127.1) * 43758.5453; return v - Math.floor(v); };
+    const t0 = performance.now();
+    let raf;
+
+    const frame = (now) => {
+      const t = ((now - t0) / 1000) * spd;
+      ctx.clearRect(0, 0, W, H);
+      const cy = H * 0.5;
+      const amp = Math.min(H * 0.15, mobile ? 96 : 150);
+
+      // ── atmosphere: breathing core glow, or drifting aurora ──
+      if (aurora) {
+        blobs.forEach(b => {
+          const bx = b.x + Math.sin(t * b.sx + b.px) * W * 0.12;
+          const by = b.y + Math.cos(t * b.sy + b.py) * H * 0.12;
+          const gl = ctx.createRadialGradient(bx, by, 0, bx, by, b.r);
+          gl.addColorStop(0, `rgba(${A},0.13)`);
+          gl.addColorStop(0.55, `rgba(${A},0.04)`);
+          gl.addColorStop(1, `rgba(${A},0)`);
+          ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+        });
+      } else {
+        const gr = (mobile ? 200 : 320) * (1 + 0.08 * Math.sin(t * 0.55));
+        const gl = ctx.createRadialGradient(W / 2, cy, 0, W / 2, cy, gr);
+        gl.addColorStop(0, `rgba(${A},0.09)`);
+        gl.addColorStop(1, `rgba(${A},0)`);
+        ctx.fillStyle = gl; ctx.fillRect(0, 0, W, H);
+      }
+
+      // ── particle constellation ──
+      if (showParticles) {
+        pts.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < -20) p.x = W + 20; else if (p.x > W + 20) p.x = -20;
+          if (p.y < -20) p.y = H + 20; else if (p.y > H + 20) p.y = -20;
+        });
+        const reach = mobile ? 116 : 142;
+        for (let i = 0; i < pts.length; i++) {
+          for (let j = i + 1; j < pts.length; j++) {
+            const a = pts[i], b = pts[j];
+            const d = Math.hypot(a.x - b.x, a.y - b.y);
+            if (d < reach) {
+              ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = `rgba(255,255,255,${0.045 * (1 - d / reach)})`;
+              ctx.lineWidth = 0.7; ctx.stroke();
+            }
+          }
+        }
+        pts.forEach(p => {
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU);
+          ctx.fillStyle = `rgba(255,255,255,${p.o})`; ctx.fill();
+        });
+      }
+
+      // ── concentric rings — ripple of impact ──
+      if (showRings) {
+        if (!reduce && t - lastRing > 3.6) { rings.push(t); lastRing = t; }
+        rings = rings.filter(b => t - b < 5);
+        const maxR = Math.min(W, H) * 0.62;
+        rings.forEach(b => {
+          const age = (t - b) / 5;
+          const r = amp + age * maxR;
+          ctx.beginPath(); ctx.arc(W / 2, cy, r, 0, TAU);
+          ctx.strokeStyle = `rgba(${A},${0.12 * (1 - age)})`;
+          ctx.lineWidth = 1; ctx.stroke();
+        });
+      }
+
+      // ── DNA double helix — bridge connecting both sides ──
+      if (showHelix) {
+        const waves = mobile ? 2.0 : 3.2;
+        const k = (TAU * waves) / W;
+        const phase = reduce ? 0.6 : t * 0.42;
+        const stepX = mobile ? 16 : 12;
+        for (let x = 0; x <= W; x += stepX * 2) {
+          const a = k * x + phase;
+          const y1 = cy + Math.sin(a) * amp;
+          const y2 = cy + Math.sin(a + Math.PI) * amp;
+          const depth = (Math.cos(a) + 1) / 2;
+          ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2);
+          ctx.strokeStyle = `rgba(${A},${0.04 + 0.08 * depth})`;
+          ctx.lineWidth = 0.8; ctx.stroke();
+        }
+        const strand = (off, col, w) => {
+          ctx.beginPath();
+          for (let x = 0; x <= W; x += 4) {
+            const y = cy + Math.sin(k * x + phase + off) * amp;
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = col; ctx.lineWidth = w; ctx.stroke();
+        };
+        strand(0, `rgba(${A},0.40)`, 1.5);
+        strand(Math.PI, 'rgba(255,255,255,0.24)', 1.3);
+        // backbone dots — placed per crest with deterministic jitter, the two
+        // strands independent, so they never line up in even parallel columns
+        const spacing = stepX * 1.8;
+        const nNodes = Math.ceil(W / spacing) + 2;
+        [0, Math.PI].forEach((off, si) => {
+          for (let m = 0; m < nNodes; m++) {
+            const seed = m * 2.7 + si * 13.3;
+            const x = m * spacing + (hash(seed) - 0.5) * spacing * 1.3;
+            if (x < -4 || x > W + 4) continue;
+            const a = k * x + phase + off;
+            const y = cy + Math.sin(a) * amp;
+            const depth = (Math.cos(a) + 1) / 2;
+            const r = (0.9 + 1.6 * depth) * (0.8 + 0.5 * hash(seed + 5.1));
+            ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+            ctx.fillStyle = si === 0
+              ? `rgba(${A},${0.24 + 0.42 * depth})`
+              : `rgba(255,255,255,${0.16 + 0.3 * depth})`;
+            ctx.fill();
+          }
+        });
+        // traveling heartbeat pulse along the axis
+        if (!reduce) {
+          const period = 7;
+          const prog = (t % period) / period;
+          const px = prog * W;
+          const fade = Math.sin(prog * Math.PI);
+          const g = ctx.createRadialGradient(px, cy, 0, px, cy, 96);
+          g.addColorStop(0, `rgba(${A},${0.20 * fade})`);
+          g.addColorStop(1, `rgba(${A},0)`);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(px, cy, 96, 0, TAU); ctx.fill();
+          ctx.save(); ctx.globalAlpha = fade;
+          ctx.beginPath();
+          for (let x = px - 70; x <= px + 70; x += 4) {
+            const y = cy + Math.sin(k * x + phase) * amp;
+            x === px - 70 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = 'rgba(190,222,255,0.7)'; ctx.lineWidth = 1.6; ctx.stroke();
+          ctx.restore();
+        }
+      }
+
+      raf = requestAnimationFrame(frame);
+    };
+
+    if (reduce) frame(t0); else raf = requestAnimationFrame(frame);
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
-  }, []);
-  return <canvas ref={ref} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: .55 }} />;
+  }, [bgStyle, accent, motion]);
+  return <canvas ref={ref} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />;
 };
+
+/* minimal section overline — a short accent rule for editorial rhythm */
+const Kicker = ({ align = 'center' }) => (
+  <div data-fade style={{
+    display: 'flex',
+    justifyContent: align === 'center' ? 'center' : 'flex-start',
+    marginBottom: '18px'
+  }}>
+    <span style={{ width: '32px', height: '2px', borderRadius: '2px', background: 'var(--accent)' }} />
+  </div>
+);
 
 /* ── NAV ── */
 const Nav = () => {
   const [sc, setSc] = useState(false);
   const isMobile = useIsMobile();
+  const [active, setActive] = useState('');
   useEffect(() => {
-    const fn = () => setSc(window.scrollY > 50);
-    window.addEventListener('scroll', fn);
-    return () => window.removeEventListener('scroll', fn);
+    const ids = ['about', 'anatom', 'works', 'timeline', 'contact'];
+    const fn = () => {
+      setSc(window.scrollY > 50);
+      const y = window.scrollY + 120;
+      let cur = '';
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el && el.offsetTop <= y) cur = id;
+      }
+      // near the very bottom, force the last section active
+      if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 8) cur = ids[ids.length - 1];
+      setActive(cur);
+    };
+    fn();
+    window.addEventListener('scroll', fn, { passive: true });
+    window.addEventListener('resize', fn);
+    return () => { window.removeEventListener('scroll', fn); window.removeEventListener('resize', fn); };
   }, []);
   const goto = id => { const el = document.getElementById(id); if (el) window.scrollTo({ top: el.offsetTop - 44, behavior: 'smooth' }); };
   const col = sc ? C.text : '#f0f0f0';
@@ -135,32 +339,65 @@ const Nav = () => {
         overflowX: isMobile ? 'auto' : 'visible',
         minWidth: 0,
       }}>
-        {[['about', 'About'], ['anatom', 'Anatom-AI'], ['works', '実績'], ['timeline', '経歴'], ['contact', '連絡']].map(([id, lb]) => (
-          <button key={id} onClick={() => goto(id)} style={{
-            background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-            ...s(isMobile ? '11px' : '12px', 400, col), opacity: .8, transition: 'opacity .15s, color .4s', whiteSpace: 'nowrap'
-          }}
-            onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-            onMouseLeave={e => e.currentTarget.style.opacity = '.8'}
-          >{lb}</button>
-        ))}
+        {[['about', 'About'], ['anatom', 'Anatom-AI'], ['works', '実績'], ['timeline', '経歴'], ['contact', '連絡']].map(([id, lb]) => {
+          const on = active === id;
+          return (
+            <button key={id} onClick={() => goto(id)} style={{
+              position: 'relative',
+              background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 2px',
+              ...s(isMobile ? '11px' : '12px', on ? 600 : 400, on ? 'var(--accent)' : col),
+              opacity: on ? 1 : .8, transition: 'opacity .15s, color .4s, font-weight .15s', whiteSpace: 'nowrap'
+            }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+              onMouseLeave={e => e.currentTarget.style.opacity = on ? '1' : '.8'}
+            >
+              {lb}
+              <span style={{
+                position: 'absolute', left: '50%', bottom: '-1px', transform: 'translateX(-50%)',
+                width: on ? '4px' : '0px', height: '4px', borderRadius: '50%',
+                background: 'var(--accent)', transition: 'width .2s ease'
+              }} />
+            </button>
+          );
+        })}
       </div>
     </nav>
   );
 };
 
 /* ── HERO ── */
-const Hero = () => {
+const Hero = ({ tw }) => {
   const isMobile = useIsMobile();
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => requestAnimationFrame(() => setShown(true)));
+    const t = setTimeout(() => setShown(true), 1200); // fallback if rAF is throttled
+    return () => { cancelAnimationFrame(raf); clearTimeout(t); };
+  }, []);
+  // entrance: visible by default, animates up from hidden; never gets stuck invisible
+  const rise = (delay, dist = 26) => ({
+    opacity: shown ? 1 : 0,
+    transform: shown ? 'none' : `translateY(${dist}px)`,
+    transition: `opacity 1s cubic-bezier(.22,.61,.36,1) ${delay}s, transform 1s cubic-bezier(.22,.61,.36,1) ${delay}s`,
+  });
   return (
     <section style={{
       minHeight: '100vh', background: '#000', position: 'relative', overflow: 'hidden',
       display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
       padding: isMobile ? '100px 18px 80px' : '120px 24px 100px', textAlign: 'center'
     }}>
-      <NetworkBg />
+      <NetworkBg bgStyle={tw.bgStyle} accent={tw.accent} motion={tw.motion} />
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 60% 52% at 50% 46%, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.32) 45%, rgba(0,0,0,0) 75%)'
+      }} />
+      {tw.grain && <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2, opacity: 0.05, mixBlendMode: 'overlay',
+        backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>\")",
+        backgroundSize: '160px 160px'
+      }} />}
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '920px', width: '100%' }}>
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: isMobile ? '28px' : '36px' }}>
+        <div className="hero-rise" style={{ ...rise(.15), display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: isMobile ? '20px' : '26px' }}>
           {['医師', 'Anatom-AI Co-founder'].map(lb => (
             <span key={lb} style={{
               ...s(isMobile ? '11px' : '12px', 500, 'rgba(255,255,255,0.55)'),
@@ -169,17 +406,24 @@ const Hero = () => {
             }}>{lb}</span>
           ))}
         </div>
-        <h1 style={{ ...s('clamp(28px,7vw,64px)', 700, '#FFFFFF'), lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '22px', textWrap: 'balance' }}>
+        {tw.eyebrow && (
+          <div className="hero-rise" style={{ ...rise(.24), display: 'flex', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '10px' : '14px', marginBottom: isMobile ? '22px' : '28px' }}>
+            <span style={{ width: isMobile ? '20px' : '52px', height: '1px', background: `linear-gradient(to right, transparent, rgba(${hexRGB(tw.accent)},0.55))` }} />
+            <span style={{ ...s(isMobile ? '9.5px' : '11px', 600, `rgba(${hexRGB(tw.accent)},0.92)`), letterSpacing: isMobile ? '.24em' : '.36em', whiteSpace: 'nowrap' }}>RETHINKING&nbsp;MEDICINE</span>
+            <span style={{ width: isMobile ? '20px' : '52px', height: '1px', background: `linear-gradient(to left, transparent, rgba(${hexRGB(tw.accent)},0.55))` }} />
+          </div>
+        )}
+        <h1 className="hero-rise" style={{ ...rise(.32), ...s('clamp(28px,7vw,64px)', 700, '#FFFFFF'), lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '22px', textWrap: 'balance' }}>
           医療を再考する——<br />社会的見地と技術革新から。
         </h1>
-        <p style={{ ...s(isMobile ? '15px' : '18px', 300, C.sec), letterSpacing: '.04em', marginBottom: isMobile ? '36px' : '44px' }}>
+        <p className="hero-rise" style={{ ...rise(.5), ...s(isMobile ? '15px' : '18px', 300, C.sec), letterSpacing: '.04em', marginBottom: isMobile ? '36px' : '44px' }}>
           Ryuhei Aoyama / 青山 龍平 · Moore
         </p>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="hero-rise" style={{ ...rise(.66), display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button onClick={() => { const el = document.getElementById('anatom'); if (el) window.scrollTo({ top: el.offsetTop - 44, behavior: 'smooth' }); }}
-            style={{ background: C.blueD, border: 'none', borderRadius: '980px', padding: isMobile ? '13px 24px' : '14px 28px', cursor: 'pointer', ...s(isMobile ? '14px' : '15px', 500, '#fff'), transition: 'background .2s' }}
-            onMouseEnter={e => e.currentTarget.style.background = '#007AFF'}
-            onMouseLeave={e => e.currentTarget.style.background = C.blueD}>
+            style={{ background: tw.accent, border: 'none', borderRadius: '980px', padding: isMobile ? '13px 24px' : '14px 28px', cursor: 'pointer', ...s(isMobile ? '14px' : '15px', 500, '#fff'), transition: 'filter .2s, transform .2s' }}
+            onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.12)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = 'none'; }}>
             Anatom-AIを知る
           </button>
           <button onClick={() => { const el = document.getElementById('contact'); if (el) window.scrollTo({ top: el.offsetTop - 44, behavior: 'smooth' }); }}
@@ -190,7 +434,7 @@ const Hero = () => {
           </button>
         </div>
       </div>
-      <div style={{ position: 'absolute', bottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+      <div className="hero-rise" style={{ ...rise(1, 0), position: 'absolute', bottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
         <span style={{ ...s('9px', 400, '#3A3A3C'), letterSpacing: '.35em', textTransform: 'uppercase' }}>scroll</span>
         <div style={{ width: '1px', height: '36px', background: 'linear-gradient(to bottom, #3A3A3C, transparent)' }} />
       </div>
@@ -204,6 +448,7 @@ const About = () => {
   return (
     <section id="about" style={{ background: C.bg, padding: isMobile ? '72px 0' : '100px 0' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
+        <Kicker n="01" />
         <h2 data-fade style={{ ...s('clamp(26px,5vw,48px)', 700), letterSpacing: '-0.015em', textAlign: 'center', marginBottom: isMobile ? '40px' : '56px' }}>About</h2>
         <div style={{
           display: 'grid',
@@ -212,8 +457,8 @@ const About = () => {
         }}>
           <div data-fade style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <p style={{ ...s(isMobile ? '15px' : '17px', 300), lineHeight: 1.8 }}>
-              医師として臨床現場に立ちながら、自然言語で3D解剖学アトラスを操作するAI——Anatom-AIを共同創業。
-              \n 学生時代より世界経済フォーラム（WEF）日本センターにて、医療データガバナンスと地域医療課題に約2年9ヶ月従事し、国際的な政策実装の現場を経験した。また，東京大学の臨床疫学・経済学教室では，特任研究員として，臨床系四大国際誌の一つであるJAMA誌のopen access誌に筆頭著者で論文を発表。同年，東京都医師会の論文大賞でも優秀賞を受賞した。
+              医師として臨床現場に立ちながら、自然言語で3D解剖学アトラスを操作するAI——Anatom-AIを共同創業。<br />
+              学生時代より世界経済フォーラム（WEF）日本センターにて、医療データガバナンスと地域医療課題に約2年9ヶ月従事し、国際的な政策実装の現場を経験した。また，東京大学の臨床疫学・経済学教室では，特任研究員として，臨床系四大国際誌の一つであるJAMA誌のopen access誌に筆頭著者で論文を発表。同年，東京都医師会の論文大賞でも優秀賞を受賞した。
             </p>
             <p style={{ ...s(isMobile ? '15px' : '17px', 300), lineHeight: 1.8 }}>
               技術面においては，医療AI企業・株式会社プレシジョンで、研究協力者として医師国家試験向け医療LLMの研究に2年間携わった経験がある。LLMについての知見を日々集めている。
@@ -246,10 +491,14 @@ const About = () => {
 const AnatomAI = () => {
   const isMobile = useIsMobile();
   return (
-    <section id="anatom" style={{ background: '#050505', padding: isMobile ? '72px 0' : '100px 0' }}>
-      <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
+    <section id="anatom" style={{ background: '#050505', padding: isMobile ? '72px 0' : '100px 0', position: 'relative', overflow: 'hidden' }}>
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 70% 55% at 50% 8%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 68%)'
+      }} />
+      <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px', position: 'relative', zIndex: 1 }}>
         <div data-fade style={{ display: 'flex', gap: '12px', justifyContent: 'center', alignItems: 'center', marginBottom: '36px', flexWrap: 'wrap' }}>
-          <span style={{ ...s('11px', 500, C.blueD), letterSpacing: '.3em', textTransform: 'uppercase' }}>現在の事業</span>
+          <span style={{ ...s('11px', 500, 'var(--accent)'), letterSpacing: '.3em', textTransform: 'uppercase' }}>現在の事業</span>
           <span style={{ ...s('11px', 400, 'rgba(255,255,255,0.2)') }}>・</span>
           <span style={{ ...s('11px', 400, 'rgba(255,255,255,0.35)'), border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', padding: '3px 10px' }}>特許出願中</span>
         </div>
@@ -266,7 +515,7 @@ const AnatomAI = () => {
           gap: isMobile ? '12px' : '2px'
         }}>
           {[
-            { label: 'Google Cloud Japan\nAgentic AI Hackathon', val: '最優秀賞受賞', sub: '880エントリー→200チーム→優勝', c: C.blueD },
+            { label: 'Google Cloud Japan\nAgentic AI Hackathon', val: '最優秀賞受賞', sub: '880エントリー→200チーム→優勝', c: 'var(--accent)' },
             { label: '創業チーム', val: '4名体制', sub: 'CEO / CTO / CFO / COO', c: '#444' },
             { label: '知的財産', val: '特許出願中', sub: '自然言語→3D操作アーキテクチャ', c: '#444' },
           ].map((item, i) => (
@@ -312,6 +561,7 @@ const Works = () => {
   return (
     <section id="works" style={{ background: C.gray, padding: isMobile ? '72px 0' : '100px 0' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
+        <Kicker n="03" />
         <h2 data-fade style={{ ...s('clamp(26px,5vw,48px)', 700), letterSpacing: '-0.015em', textAlign: 'center', marginBottom: '12px' }}>Selected Works</h2>
         <p data-fade style={{ ...s(isMobile ? '16px' : '19px', 300, C.sec), textAlign: 'center', marginBottom: isMobile ? '40px' : '56px' }}>研究・政策・産業をまたぐ主要な実績。</p>
         <div style={{
@@ -323,20 +573,20 @@ const Works = () => {
             <div data-fade key={i} style={{
               background: C.bg, borderRadius: '20px',
               padding: isMobile ? '28px 24px' : '40px 36px',
-              borderTop: `3px solid ${w.c}`, cursor: 'default',
+              border: `1px solid ${C.border}`, cursor: 'default',
               transition: 'transform .3s, box-shadow .3s'
             }}
               onMouseEnter={e => { if (!isMobile) { e.currentTarget.style.transform = 'scale(1.018)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(0,0,0,0.08)'; } }}
               onMouseLeave={e => { if (!isMobile) { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; } }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ ...s('11px', 600, w.c), background: `${w.c}18`, padding: '4px 10px', borderRadius: '4px', letterSpacing: '.04em' }}>{w.tag}</span>
+                <span style={{ ...s('11px', 600, 'var(--accent)'), background: 'color-mix(in srgb, var(--accent) 12%, transparent)', padding: '4px 10px', borderRadius: '4px', letterSpacing: '.04em' }}>{w.tag}</span>
                 <span style={{ ...s('12px', 400, C.sec) }}>{w.year}</span>
               </div>
               <h3 style={{ ...s(isMobile ? '16px' : '17px', 700), letterSpacing: '-0.01em', lineHeight: 1.4, marginBottom: '12px' }}>{w.title}</h3>
               <p style={{ ...s(isMobile ? '13px' : '14px', 300, C.sec), lineHeight: 1.8, marginBottom: '16px' }}>{w.desc}</p>
               <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <p style={{ ...s('12px', 400, C.sec) }}>{w.note}</p>
-                {w.link && <a href={w.link} target="_blank" rel="noreferrer" style={{ ...s('12px', 500, C.blue), textDecoration: 'none', whiteSpace: 'nowrap' }}>DOI →</a>}
+                {w.link && <a href={w.link} target="_blank" rel="noreferrer" style={{ ...s('12px', 500, 'var(--accent)'), textDecoration: 'none', whiteSpace: 'nowrap' }}>DOI →</a>}
               </div>
             </div>
           ))}
@@ -360,6 +610,7 @@ const Timeline = () => {
   return (
     <section id="timeline" style={{ background: C.bg, padding: isMobile ? '72px 0' : '100px 0' }}>
       <div style={{ maxWidth: '760px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
+        <Kicker n="04" />
         <h2 data-fade style={{ ...s('clamp(26px,5vw,48px)', 700), letterSpacing: '-0.015em', textAlign: 'center', marginBottom: isMobile ? '40px' : '56px' }}>経歴</h2>
         {items.map((item, i) => (
           <div data-fade key={i} style={{
@@ -369,7 +620,7 @@ const Timeline = () => {
             padding: isMobile ? '18px 0' : '22px 0',
             borderBottom: `1px solid ${C.border}`
           }}>
-            <span style={{ ...s('12px', item.cur ? 700 : 400, item.cur ? C.blue : C.sec), paddingTop: '3px', lineHeight: 1.55, letterSpacing: '-.005em' }}>{item.y}</span>
+            <span style={{ ...s('12px', item.cur ? 700 : 400, item.cur ? 'var(--accent)' : C.sec), paddingTop: '3px', lineHeight: 1.55, letterSpacing: '-.005em' }}>{item.y}</span>
             <div>
               <p style={{ ...s(isMobile ? '15px' : '17px', item.cur ? 700 : 500), marginBottom: '4px', letterSpacing: '-.005em', lineHeight: 1.5 }}>{item.t1}</p>
               <p style={{ ...s('13px', 300, C.sec) }}>{item.t2}</p>
@@ -402,6 +653,7 @@ const Academic = () => {
   return (
     <section style={{ background: C.gray, padding: isMobile ? '72px 0' : '100px 0' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
+        <Kicker n="05" />
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
@@ -410,7 +662,7 @@ const Academic = () => {
           <div>
             <h2 data-fade style={{ ...s('clamp(22px,4.5vw,36px)', 700), letterSpacing: '-0.012em', marginBottom: isMobile ? '24px' : '32px' }}>論文・発表</h2>
             <div data-fade style={{ padding: '24px 0', borderBottom: `1px solid ${C.border}`, marginBottom: '8px' }}>
-              <span style={{ ...s('12px', 600, C.blue) }}>査読付き原著論文</span>
+              <span style={{ ...s('12px', 600, 'var(--accent)') }}>査読付き原著論文</span>
               <p style={{ ...s(isMobile ? '14px' : '15px', 700), margin: '8px 0 5px', lineHeight: 1.5, letterSpacing: '-.005em' }}>
                 Clinic Characteristics and Antibiotic Prescribing for Acute Respiratory Infections in Japan
               </p>
@@ -419,12 +671,12 @@ const Academic = () => {
               </p>
               <p style={{ ...s('13px', 300, C.sec) }}>JAMA Network Open. 2024;7(10):e2440406.</p>
               <a href="https://doi.org/10.1001/jamanetworkopen.2024.40406" target="_blank" rel="noreferrer"
-                style={{ ...s('12px', 500, C.blue), textDecoration: 'none', display: 'inline-block', marginTop: '6px', wordBreak: 'break-all' }}>
+                style={{ ...s('12px', 500, 'var(--accent)'), textDecoration: 'none', display: 'inline-block', marginTop: '6px', wordBreak: 'break-all' }}>
                 DOI: 10.1001/jamanetworkopen.2024.40406 →
               </a>
             </div>
             <div data-fade style={{ padding: '20px 0', borderBottom: `1px solid ${C.border}`, marginBottom: '8px' }}>
-              <span style={{ ...s('12px', 600, C.blue) }}>受賞論文</span>
+              <span style={{ ...s('12px', 600, 'var(--accent)') }}>受賞論文</span>
               <p style={{ ...s(isMobile ? '14px' : '15px', 500), margin: '6px 0 5px', lineHeight: 1.5 }}>医療を再考する——社会的見地と技術革新から。</p>
               <p style={{ ...s('13px', 300, C.sec) }}>令和6年度 東京都医師会 論文大賞 優秀賞</p>
             </div>
@@ -440,7 +692,7 @@ const Academic = () => {
             <h2 data-fade style={{ ...s('clamp(22px,4.5vw,36px)', 700), letterSpacing: '-0.012em', marginBottom: isMobile ? '24px' : '32px' }}>受賞・資格</h2>
             {awards.map((a, i) => (
               <div data-fade key={i} style={{ display: 'grid', gridTemplateColumns: '44px 1fr', gap: '16px', padding: '16px 0', borderBottom: `1px solid ${C.border}` }}>
-                <span style={{ ...s('12px', 500, C.blue), paddingTop: '2px' }}>{a.y}</span>
+                <span style={{ ...s('12px', 500, 'var(--accent)'), paddingTop: '2px' }}>{a.y}</span>
                 <p style={{ ...s(isMobile ? '14px' : '15px', 500), lineHeight: 1.5 }}>{a.t}</p>
               </div>
             ))}
@@ -455,19 +707,26 @@ const Academic = () => {
 const Contact = () => {
   const isMobile = useIsMobile();
   return (
-    <section id="contact" style={{ background: '#000', padding: isMobile ? '80px 18px' : '120px 24px', textAlign: 'center', borderTop: '0.5px solid rgba(255,255,255,0.07)' }}>
-      <div data-fade style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <section id="contact" style={{ background: '#000', padding: isMobile ? '80px 18px' : '120px 24px', textAlign: 'center', borderTop: '0.5px solid rgba(255,255,255,0.07)', position: 'relative', overflow: 'hidden' }}>
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 60% 60% at 50% 100%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%)'
+      }} />
+      <div data-fade style={{ maxWidth: '600px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '18px' }}>
+          <span style={{ width: '32px', height: '2px', borderRadius: '2px', background: 'var(--accent)' }} />
+        </div>
         <h2 style={{ ...s('clamp(28px,7vw,60px)', 700, '#fff'), letterSpacing: '-0.022em', lineHeight: 1.12, marginBottom: '20px' }}>
-          <br />
+          Contact
         </h2>
         <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.sec), lineHeight: 1.7, marginBottom: isMobile ? '32px' : '40px' }}>
           投資・共同研究・お問い合わせ、お気軽にご連絡ください。
         </p>
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="mailto:ryuhei.aoyama@quadka.com"
-            style={{ background: C.blueD, borderRadius: '980px', padding: isMobile ? '13px 24px' : '15px 30px', ...s(isMobile ? '14px' : '15px', 500, '#fff'), textDecoration: 'none', transition: 'background .2s' }}
-            onMouseEnter={e => e.currentTarget.style.background = '#007AFF'}
-            onMouseLeave={e => e.currentTarget.style.background = C.blueD}>
+            style={{ background: 'var(--accent)', borderRadius: '980px', padding: isMobile ? '13px 24px' : '15px 30px', ...s(isMobile ? '14px' : '15px', 500, '#fff'), textDecoration: 'none', transition: 'filter .2s, transform .2s' }}
+            onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.12)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = 'none'; }}>
             E-mail
           </a>
           {[
@@ -514,17 +773,7 @@ const Footer = () => {
   );
 };
 
-/* ── APP ── */
-const App = () => {
-  useFade();
-  return (
-    <div>
-      <Nav /><Hero /><About /><AnatomAI /><Works /><Timeline /><Academic /><Contact /><Footer />
-    </div>
-  );
-};
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 
 
 </script>
