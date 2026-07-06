@@ -259,7 +259,7 @@ const About = () => {
           </div>
         </div>
       </div>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: isMobile ? '64px 18px 0' : '92px 24px 0' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: isMobile ? '64px 18px 0' : '92px 24px 0' }}>
         <div data-fade style={{ textAlign: 'center', marginBottom: isMobile ? '32px' : '20px' }}>
           <h3 style={{ ...s('clamp(19px,3.6vw,26px)', 500, C.navy), letterSpacing: '.04em' }}>経歴</h3>
           <p style={{ ...s('11px', 600, C.tert), letterSpacing: '.3em', textTransform: 'uppercase', marginTop: '8px' }}>Career Timeline</p>
@@ -382,6 +382,7 @@ const LogoStrip = () => {
   const isMobile = useIsMobile();
   const logos = [
     { src: 'aoyama/utokyo.jpg', alt: 'The University of Tokyo', h: 36 },
+    { src: 'aoyama/ucla.png', alt: 'UCLA', h: 26 },
     { src: 'aoyama/wef.jpeg', alt: 'World Economic Forum', h: 46 },
     { src: 'aoyama/precision.jpg', alt: 'Precision', h: 30 },
     { src: 'aoyama/jihs.png', alt: 'Japan Institute for Health Security', h: 42 },
@@ -408,9 +409,10 @@ const LogoStrip = () => {
 
 /* ── FLOW TIMELINE ── (横軸フロー型インフォグラフィック) */
 const TL_NODES = [
+  { date: '2019.04', org: '東京大学 理科三類', role: '入学', logo: 'aoyama/utokyo.jpg', lh: 22 },
   { date: '2020.11', org: 'World Economic Forum', role: '日本センター C4IRJ ／ 医療データガバナンス・地域医療DX', logo: 'aoyama/wef.jpeg', lh: 20 },
   { date: '2023.04', org: '株式会社プレシジョン', role: '研究協力者 ／ 医師国家試験向け医療LLM研究', logo: 'aoyama/precision.jpg', lh: 15 },
-  { date: '2023.08', org: 'UCLA　PQI-Lab', role: 'Research Assistant', logo: null },
+  { date: '2023.08', org: 'UCLA　PQI-Lab', role: 'Research Assistant', logo: 'aoyama/ucla.png', lh: 15 },
   { date: '2023.10', org: '東京大学大学院', role: '臨床疫学・経済学 特任研究員', logo: 'aoyama/utokyo.jpg', lh: 22 },
   { date: '2025.04', org: '初期臨床研修医', role: '国立国際医療センター（JIHS）', logo: 'aoyama/jihs.png', lh: 20, cur: true },
   { date: '現在', org: 'Anatom-AI', role: 'Co-founder ／ 開発・事業推進', logo: null, cur: true },
@@ -446,7 +448,7 @@ const FlowTimeline = () => {
   }
   return (
     <div data-fade style={{ overflowX: 'auto', paddingBottom: '10px' }}>
-      <div style={{ position: 'relative', display: 'flex', minWidth: '1120px', height: '440px' }}>
+      <div style={{ position: 'relative', display: 'flex', minWidth: '1300px', height: '440px' }}>
         <div style={{ position: 'absolute', top: '220px', left: '24px', right: '46px', height: '2px', background: '#111' }} />
         <div style={{ position: 'absolute', top: '213px', right: '24px', width: 0, height: 0, borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderLeft: '15px solid #111' }} />
         {TL_NODES.map((n, i) => {
