@@ -6,7 +6,7 @@
   <title>Ryuhei Aoyama / 青山 龍平</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Zen+Old+Mincho:wght@500;700&display=swap" rel="stylesheet">
   <script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
@@ -17,7 +17,7 @@
     ::-webkit-scrollbar { width: 0; height: 0; }
     .nav-menu::-webkit-scrollbar { display: none; }
     .nav-menu { -ms-overflow-style: none; scrollbar-width: none; }
-    :root { --accent: #2997FF; }
+    :root { --accent: #2E2C7E; }
     @media (prefers-reduced-motion: reduce) {
       .hero-rise { transition: none !important; opacity: 1 !important; transform: none !important; }
     }
@@ -30,14 +30,14 @@
 const { useState, useEffect } = React;
 
 const F = '"Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif';
+const SERIF = '"Zen Old Mincho", "Hiragino Mincho ProN", serif';
 const C = {
-  bg: '#FFFFFF', gray: '#F5F5F7', dark: '#000000',
-  text: '#1D1D1F', sec: '#6E6E73', tert: '#AEAEB2',
-  blue: '#0066CC', blueD: '#2997FF',
-  green: '#30D158', yellow: '#FFD60A', orange: '#FF9F0A',
+  bg: '#FFFFFF', light: '#EEF1F6', dark: '#000000',
+  navy: '#2E2C7E', navyD: '#242270',
+  text: '#1D1D1F', sec: '#5A5A66', tert: '#9AA0AE',
   border: 'rgba(0,0,0,0.09)',
 };
-const ACCENT = '#2997FF';
+const ACCENT = '#2E2C7E';
 const s = (size, weight = 400, color = C.text, extra = {}) =>
   ({ fontFamily: F, fontSize: size, fontWeight: weight, color, ...extra });
 
@@ -69,26 +69,43 @@ const useFade = () => useEffect(() => {
   return () => obs.disconnect();
 }, []);
 
-/* minimal section overline */
-const Kicker = ({ align = 'center' }) => (
-  <div data-fade style={{
-    display: 'flex',
-    justifyContent: align === 'center' ? 'center' : 'flex-start',
-    marginBottom: '18px'
-  }}>
-    <span style={{ width: '32px', height: '2px', borderRadius: '2px', background: 'var(--accent)' }} />
+/* ── SECTION HEAD (プレシジョン式：中央の紺日本語＋下に灰色英字) ── */
+const SectionHead = ({ jp, en, dark = false, mb }) => (
+  <div data-fade style={{ textAlign: 'center', marginBottom: mb || '48px' }}>
+    <h2 style={{ ...s('clamp(23px,4.4vw,34px)', 500, dark ? '#FFFFFF' : C.navy), letterSpacing: '.04em', lineHeight: 1.3 }}>{jp}</h2>
+    <p style={{ ...s('11px', 600, dark ? 'rgba(255,255,255,0.4)' : C.tert), letterSpacing: '.3em', textTransform: 'uppercase', marginTop: '9px' }}>{en}</p>
   </div>
 );
 
-/* ── NAV ── */
+/* pill CTA */
+const Pill = ({ children, onClick, href, filled = true, dark = false, ...rest }) => {
+  const base = {
+    display: 'inline-flex', alignItems: 'center', gap: '8px',
+    borderRadius: '980px', padding: '13px 26px', cursor: 'pointer',
+    textDecoration: 'none', border: filled ? 'none' : `1px solid ${dark ? 'rgba(255,255,255,0.3)' : 'rgba(46,44,126,0.35)'}`,
+    background: filled ? (dark ? '#FFFFFF' : C.navy) : 'transparent',
+    ...s('14.5px', 500, filled ? (dark ? C.navy : '#fff') : (dark ? '#fff' : C.navy)),
+    transition: 'filter .2s, transform .2s, background .2s, border-color .2s',
+  };
+  const El = href ? 'a' : 'button';
+  return (
+    <El href={href} onClick={onClick} style={base}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; if (filled) e.currentTarget.style.filter = 'brightness(1.08)'; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.filter = 'none'; }}
+      {...rest}>
+      {children}
+      <span style={{ fontSize: '12px', opacity: .8 }}>›</span>
+    </El>
+  );
+};
+
+/* ── NAV ── (常時白背景・プレシジョン式) */
 const Nav = () => {
-  const [sc, setSc] = useState(false);
   const isMobile = useIsMobile();
   const [active, setActive] = useState('');
   useEffect(() => {
-    const ids = ['about', 'anatom', 'works', 'timeline', 'contact'];
+    const ids = ['about', 'anatom', 'works', 'contact'];
     const fn = () => {
-      setSc(window.scrollY > 50);
       const y = window.scrollY + 120;
       let cur = '';
       for (const id of ids) {
@@ -103,53 +120,53 @@ const Nav = () => {
     window.addEventListener('resize', fn);
     return () => { window.removeEventListener('scroll', fn); window.removeEventListener('resize', fn); };
   }, []);
-  const goto = id => { const el = document.getElementById(id); if (el) window.scrollTo({ top: el.offsetTop - 44, behavior: 'smooth' }); };
-  const col = sc ? C.text : '#f0f0f0';
+  const goto = id => { const el = document.getElementById(id); if (el) window.scrollTo({ top: el.offsetTop - 56, behavior: 'smooth' }); };
   return (
     <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, height: '44px',
-      background: sc ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.85)',
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, height: '56px',
+      background: 'rgba(255,255,255,0.9)',
       backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)',
-      borderBottom: `0.5px solid ${sc ? 'rgba(0,0,0,0.12)' : 'rgba(255,255,255,0.1)'}`,
+      borderBottom: `1px solid rgba(0,0,0,0.08)`,
       display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      padding: isMobile ? '0 14px' : '0 24px', transition: 'background .4s, border-color .4s', gap: '10px'
+      padding: isMobile ? '0 16px' : '0 32px', gap: '10px'
     }}>
       <span onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        style={{ ...s(isMobile ? '13px' : '14px', 500, col), letterSpacing: '-0.01em', cursor: 'pointer', transition: 'color .4s', whiteSpace: 'nowrap', flexShrink: 0 }}>
+        style={{ ...s(isMobile ? '15px' : '17px', 700, C.navy), fontFamily: SERIF, letterSpacing: '.04em', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}>
         {isMobile ? 'R. Aoyama' : 'Ryuhei Aoyama'}
       </span>
-      <div className="nav-menu" style={{
-        display: 'flex', gap: isMobile ? '14px' : '22px',
-        overflowX: isMobile ? 'auto' : 'visible',
-        minWidth: 0,
-      }}>
-        {[['about', 'About'], ['anatom', 'Anatom-AI'], ['works', '実績'], ['timeline', '経歴'], ['contact', '連絡']].map(([id, lb]) => {
-          const on = active === id;
-          return (
-            <button key={id} onClick={() => goto(id)} style={{
-              position: 'relative',
-              background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 2px',
-              ...s(isMobile ? '11px' : '12px', on ? 600 : 400, on ? 'var(--accent)' : col),
-              opacity: on ? 1 : .8, transition: 'opacity .15s, color .4s, font-weight .15s', whiteSpace: 'nowrap'
-            }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-              onMouseLeave={e => e.currentTarget.style.opacity = on ? '1' : '.8'}
-            >
-              {lb}
-              <span style={{
-                position: 'absolute', left: '50%', bottom: '-1px', transform: 'translateX(-50%)',
-                width: on ? '4px' : '0px', height: '4px', borderRadius: '50%',
-                background: 'var(--accent)', transition: 'width .2s ease'
-              }} />
-            </button>
-          );
-        })}
+      <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '12px' : '22px', minWidth: 0 }}>
+        <div className="nav-menu" style={{ display: 'flex', gap: isMobile ? '13px' : '22px', overflowX: isMobile ? 'auto' : 'visible', minWidth: 0 }}>
+          {[['about', 'About'], ['anatom', 'Anatom-AI'], ['works', '実績']].map(([id, lb]) => {
+            const on = active === id;
+            return (
+              <button key={id} onClick={() => goto(id)} style={{
+                background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 2px',
+                ...s(isMobile ? '12px' : '13px', on ? 600 : 400, on ? C.navy : C.sec),
+                whiteSpace: 'nowrap', transition: 'color .2s'
+              }}
+                onMouseEnter={e => e.currentTarget.style.color = C.navy}
+                onMouseLeave={e => e.currentTarget.style.color = on ? C.navy : C.sec}>
+                {lb}
+              </button>
+            );
+          })}
+        </div>
+        {!isMobile && (
+          <button onClick={() => goto('contact')} style={{
+            background: C.navy, border: 'none', borderRadius: '980px', padding: '9px 18px', cursor: 'pointer',
+            ...s('12.5px', 500, '#fff'), whiteSpace: 'nowrap', transition: 'filter .2s'
+          }}
+            onMouseEnter={e => e.currentTarget.style.filter = 'brightness(1.12)'}
+            onMouseLeave={e => e.currentTarget.style.filter = 'none'}>
+            お問い合わせ
+          </button>
+        )}
       </div>
     </nav>
   );
 };
 
-/* ── HERO ── (静的グラデーション背景・動画/キャンバスアニメ削除) */
+/* ── HERO ── (黒維持・グローをインディゴに) */
 const Hero = () => {
   const isMobile = useIsMobile();
   const [shown, setShown] = useState(false);
@@ -165,53 +182,38 @@ const Hero = () => {
   });
   return (
     <section style={{
-      minHeight: '100vh', background: '#000', position: 'relative', overflow: 'hidden',
+      minHeight: '100vh', background: '#05060E', position: 'relative', overflow: 'hidden',
       display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
       padding: isMobile ? '100px 18px 80px' : '120px 24px 100px', textAlign: 'center'
     }}>
-      {/* 静的なアクセントグロー */}
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 70% 55% at 50% 45%, rgba(41,151,255,0.22) 0%, rgba(41,151,255,0.06) 45%, rgba(0,0,0,0) 75%)'
+        background: 'radial-gradient(ellipse 72% 56% at 50% 44%, rgba(88,84,214,0.30) 0%, rgba(46,44,126,0.12) 45%, rgba(0,0,0,0) 76%)'
       }} />
       <div style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 60% 52% at 50% 46%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.22) 45%, rgba(0,0,0,0) 75%)'
+        background: 'radial-gradient(ellipse 60% 52% at 50% 46%, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 75%)'
       }} />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '920px', width: '100%' }}>
-        <div className="hero-rise" style={{ ...rise(.15), display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: isMobile ? '20px' : '26px' }}>
-          {['医師', 'Anatom-AI Co-founder'].map(lb => (
+        <div className="hero-rise" style={{ ...rise(.15), display: 'flex', gap: '8px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: isMobile ? '22px' : '28px' }}>
+          {['医師', 'AIエンジニア'].map(lb => (
             <span key={lb} style={{
-              ...s(isMobile ? '11px' : '12px', 500, 'rgba(255,255,255,0.55)'),
-              border: '1px solid rgba(255,255,255,0.15)', borderRadius: '980px',
+              ...s(isMobile ? '11px' : '12px', 500, 'rgba(255,255,255,0.62)'),
+              border: '1px solid rgba(255,255,255,0.18)', borderRadius: '980px',
               padding: '5px 14px', letterSpacing: '.03em', whiteSpace: 'nowrap'
             }}>{lb}</span>
           ))}
         </div>
-        <h1 className="hero-rise" style={{ ...rise(.32), ...s('clamp(28px,7vw,64px)', 700, '#FFFFFF'), lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '22px', textWrap: 'balance' }}>
-          医療を再考する——<br />社会的見地と技術革新から。
+        <h1 className="hero-rise" style={{ ...rise(.32), ...s('clamp(40px,10vw,88px)', 700, '#FFFFFF'), fontFamily: SERIF, lineHeight: 1.1, letterSpacing: '.06em', marginBottom: isMobile ? '16px' : '20px' }}>
+          青山 龍平
         </h1>
-        <p className="hero-rise" style={{ ...rise(.5), ...s(isMobile ? '15px' : '18px', 300, C.sec), letterSpacing: '.04em', marginBottom: isMobile ? '36px' : '44px' }}>
-          Ryuhei Aoyama / 青山 龍平 · Moore
+        <p className="hero-rise" style={{ ...rise(.5), ...s(isMobile ? '14px' : '17px', 300, 'rgba(255,255,255,0.6)'), letterSpacing: '.14em' }}>
+          Ryuhei Aoyama · Moore
         </p>
-        <div className="hero-rise" style={{ ...rise(.66), display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => { const el = document.getElementById('anatom'); if (el) window.scrollTo({ top: el.offsetTop - 44, behavior: 'smooth' }); }}
-            style={{ background: ACCENT, border: 'none', borderRadius: '980px', padding: isMobile ? '13px 24px' : '14px 28px', cursor: 'pointer', ...s(isMobile ? '14px' : '15px', 500, '#fff'), transition: 'filter .2s, transform .2s' }}
-            onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.12)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = 'none'; }}>
-            Anatom-AIを知る
-          </button>
-          <button onClick={() => { const el = document.getElementById('contact'); if (el) window.scrollTo({ top: el.offsetTop - 44, behavior: 'smooth' }); }}
-            style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.25)', borderRadius: '980px', padding: isMobile ? '13px 24px' : '14px 28px', cursor: 'pointer', ...s(isMobile ? '14px' : '15px', 500, '#fff'), transition: 'border-color .2s' }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.55)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'}>
-            連絡する
-          </button>
-        </div>
       </div>
       <div className="hero-rise" style={{ ...rise(1, 0), position: 'absolute', bottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-        <span style={{ ...s('9px', 400, '#3A3A3C'), letterSpacing: '.35em', textTransform: 'uppercase' }}>scroll</span>
-        <div style={{ width: '1px', height: '36px', background: 'linear-gradient(to bottom, #3A3A3C, transparent)' }} />
+        <span style={{ ...s('9px', 400, 'rgba(255,255,255,0.35)'), letterSpacing: '.35em', textTransform: 'uppercase' }}>scroll</span>
+        <div style={{ width: '1px', height: '36px', background: 'linear-gradient(to bottom, rgba(255,255,255,0.35), transparent)' }} />
       </div>
     </section>
   );
@@ -221,25 +223,24 @@ const Hero = () => {
 const About = () => {
   const isMobile = useIsMobile();
   return (
-    <section id="about" style={{ background: C.bg, padding: isMobile ? '72px 0' : '100px 0' }}>
+    <section id="about" style={{ background: C.bg, padding: isMobile ? '72px 0' : '104px 0' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
-        <Kicker />
-        <h2 data-fade style={{ ...s('clamp(26px,5vw,48px)', 700), letterSpacing: '-0.015em', textAlign: 'center', marginBottom: isMobile ? '40px' : '56px' }}>About</h2>
+        <SectionHead jp="プロフィール" en="About" mb={isMobile ? '40px' : '56px'} />
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '3fr 2fr',
           gap: isMobile ? '40px' : '64px', alignItems: 'start'
         }}>
           <div data-fade style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            <p style={{ ...s(isMobile ? '15px' : '17px', 300), lineHeight: 1.8 }}>
+            <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.text), lineHeight: 1.85 }}>
               医師として臨床現場に立ちながら、自然言語で3D解剖学アトラスを操作するAI——Anatom-AIを共同創業。<br />
-              学生時代より世界経済フォーラム（WEF）日本センターにて、医療データガバナンスと地域医療課題に約2年9ヶ月従事し、国際的な政策実装の現場を経験した。また，東京大学の臨床疫学・経済学教室では，特任研究員として，臨床系四大国際誌の一つであるJAMA誌のopen access誌に筆頭著者で論文を発表。同年，東京都医師会の論文大賞でも優秀賞を受賞した。
+              東京大学在学中から世界経済フォーラム（WEF）日本センターにて、医療データガバナンスと地域医療課題に約2年9ヶ月従事し、国際的な政策実装の現場を経験した。また，東京大学の臨床疫学・経済学教室では，特任研究員として，臨床系四大国際誌の一つであるJAMA誌のopen access誌に筆頭著者で論文を発表。同年，東京都医師会の論文大賞でも優秀賞を受賞した。
             </p>
-            <p style={{ ...s(isMobile ? '15px' : '17px', 300), lineHeight: 1.8 }}>
+            <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.text), lineHeight: 1.85 }}>
               技術面においては，医療AI企業・株式会社プレシジョンで、研究協力者として医師国家試験向け医療LLMの研究に2年間携わった経験がある。LLMについての知見を日々集めている。
             </p>
-            <p style={{ ...s(isMobile ? '15px' : '17px', 300), lineHeight: 1.8 }}>
-              「政策・公衆衛生・テクノロジー」の三方向から医療を動かすことを信条とする。なお，小説執筆・ワイン・ゲームデザインなどにも領域横断的な好奇心を持つ。
+            <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.text), lineHeight: 1.85 }}>
+              実は趣味として，小説執筆・ワイン・ゲームデザインなどにも領域横断的な好奇心を持つ。
             </p>
           </div>
           <div data-fade>
@@ -251,53 +252,56 @@ const About = () => {
               ['E-mail', 'ryuhei.aoyama@quadka.com'],
             ].map(([k, v]) => (
               <div key={k} style={{ padding: '14px 0', borderBottom: `1px solid ${C.border}` }}>
-                <p style={{ ...s('12px', 400, C.sec), marginBottom: '3px' }}>{k}</p>
-                <p style={{ ...s('14px', 500), wordBreak: 'break-word' }}>{v}</p>
+                <p style={{ ...s('12px', 600, C.navy), marginBottom: '4px', letterSpacing: '.02em' }}>{k}</p>
+                <p style={{ ...s('14px', 500, C.text), wordBreak: 'break-word' }}>{v}</p>
               </div>
             ))}
           </div>
         </div>
       </div>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: isMobile ? '64px 18px 0' : '92px 24px 0' }}>
+        <div data-fade style={{ textAlign: 'center', marginBottom: isMobile ? '32px' : '20px' }}>
+          <h3 style={{ ...s('clamp(19px,3.6vw,26px)', 500, C.navy), letterSpacing: '.04em' }}>経歴</h3>
+          <p style={{ ...s('11px', 600, C.tert), letterSpacing: '.3em', textTransform: 'uppercase', marginTop: '8px' }}>Career Timeline</p>
+        </div>
+        <FlowTimeline />
+      </div>
     </section>
   );
 };
 
-/* ── ANATOM-AI ── */
+/* ── ANATOM-AI ── (薄青灰帯) */
 const AnatomAI = () => {
   const isMobile = useIsMobile();
   return (
-    <section id="anatom" style={{ background: '#050505', padding: isMobile ? '72px 0' : '100px 0', position: 'relative', overflow: 'hidden' }}>
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 70% 55% at 50% 8%, color-mix(in srgb, var(--accent) 13%, transparent), transparent 68%)'
-      }} />
+    <section id="anatom" style={{ background: C.light, padding: isMobile ? '72px 0' : '104px 0', position: 'relative' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px', position: 'relative', zIndex: 1 }}>
-        <div data-fade style={{ display: 'flex', gap: '12px', justifyContent: 'center', alignItems: 'center', marginBottom: '36px', flexWrap: 'wrap' }}>
-          <span style={{ ...s('11px', 500, 'var(--accent)'), letterSpacing: '.3em', textTransform: 'uppercase' }}>現在の事業</span>
-          <span style={{ ...s('11px', 400, 'rgba(255,255,255,0.2)') }}>・</span>
-          <span style={{ ...s('11px', 400, 'rgba(255,255,255,0.35)'), border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', padding: '3px 10px' }}>特許出願中</span>
+        <div data-fade style={{ display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
+          <span style={{ ...s('11px', 600, C.navy), letterSpacing: '.3em', textTransform: 'uppercase' }}>現在の事業</span>
+          <span style={{ ...s('11px', 400, C.tert) }}>・</span>
+          <span style={{ ...s('11px', 500, C.navy), border: `1px solid rgba(46,44,126,0.3)`, borderRadius: '4px', padding: '3px 10px' }}>特許出願中</span>
         </div>
-        <h2 data-fade style={{ ...s('clamp(34px,8vw,80px)', 700, '#FFFFFF'), letterSpacing: '-0.025em', textAlign: 'center', lineHeight: 1.07, marginBottom: '18px' }}>Anatom-AI</h2>
-        <p data-fade style={{ ...s('clamp(17px,2.5vw,26px)', 300, C.sec), textAlign: 'center', maxWidth: '580px', margin: '0 auto 16px', lineHeight: 1.5, padding: '0 8px' }}>
+        <h2 data-fade style={{ ...s('clamp(34px,8vw,74px)', 700, C.navy), letterSpacing: '-0.02em', textAlign: 'center', lineHeight: 1.05, marginBottom: '18px' }}>Anatom-AI</h2>
+        <p data-fade style={{ ...s('clamp(17px,2.5vw,25px)', 500, C.text), textAlign: 'center', maxWidth: '580px', margin: '0 auto 16px', lineHeight: 1.5, padding: '0 8px' }}>
           自然言語で操作する3D解剖学アトラス
         </p>
-        <p data-fade style={{ ...s(isMobile ? '14px' : '15px', 300, 'rgba(255,255,255,0.38)'), textAlign: 'center', maxWidth: '600px', margin: isMobile ? '0 auto 44px' : '0 auto 64px', lineHeight: 1.8, padding: '0 8px' }}>
-          「自然言語 → LLMエージェント → 3D解剖モデル操作」という独自アーキテクチャで、 医学教育の体験を根本から変える。
+        <p data-fade style={{ ...s(isMobile ? '14px' : '15px', 300, C.sec), textAlign: 'center', maxWidth: '600px', margin: isMobile ? '0 auto 44px' : '0 auto 56px', lineHeight: 1.85, padding: '0 8px' }}>
+          「自然言語 → LLMエージェント → 3D解剖モデル操作」という独自アーキテクチャで、医学教育の体験を根本から変える。
         </p>
         <div data-fade style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : 'repeat(3,1fr)',
-          gap: isMobile ? '12px' : '2px'
+          gap: isMobile ? '14px' : '16px'
         }}>
           {[
-            { label: 'Google Cloud Japan\nAgentic AI Hackathon', val: '最優秀賞受賞', sub: '880エントリー→200チーム→優勝', c: 'var(--accent)' },
-            { label: '創業チーム', val: '4名体制', sub: 'CEO / CTO / CFO / COO', c: '#444' },
-            { label: '知的財産', val: '特許出願中', sub: '自然言語→3D操作アーキテクチャ', c: '#444' },
+            { label: 'Google Cloud Japan\nAgentic AI Hackathon', val: '最優秀賞受賞', sub: '880エントリー→200チーム→優勝' },
+            { label: '創業チーム', val: '4名体制', sub: '' },
+            { label: '知的財産', val: '特許出願中', sub: '自然言語→3D操作アーキテクチャ' },
           ].map((item, i) => (
-            <div key={i} style={{ background: '#111', padding: isMobile ? '28px 22px' : '36px 28px', borderTop: `2px solid ${item.c}`, borderRadius: isMobile ? '6px' : 0 }}>
-              <p style={{ ...s('12px', 400, C.sec), lineHeight: 1.6, whiteSpace: 'pre-line', marginBottom: '14px' }}>{item.label}</p>
-              <p style={{ ...s(isMobile ? '20px' : '22px', 700, '#FFF'), letterSpacing: '-0.01em', marginBottom: '6px' }}>{item.val}</p>
-              <p style={{ ...s('12px', 300, 'rgba(255,255,255,0.32)') }}>{item.sub}</p>
+            <div key={i} style={{ background: '#fff', padding: isMobile ? '26px 22px' : '32px 26px', borderTop: `3px solid ${C.navy}`, borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+              <p style={{ ...s('12px', 500, C.sec), lineHeight: 1.6, whiteSpace: 'pre-line', marginBottom: '14px' }}>{item.label}</p>
+              <p style={{ ...s(isMobile ? '20px' : '22px', 700, C.navy), letterSpacing: '-0.01em', marginBottom: item.sub ? '6px' : 0 }}>{item.val}</p>
+              {item.sub && <p style={{ ...s('12px', 400, C.tert) }}>{item.sub}</p>}
             </div>
           ))}
         </div>
@@ -311,34 +315,33 @@ const Works = () => {
   const isMobile = useIsMobile();
   const works = [
     {
-      tag: 'JAMA Network Open', year: '2024',
+      tag: 'JAMA Network Open', year: '2024', logo: 'aoyama/jama.png',
       title: 'Clinic Characteristics and Antibiotic Prescribing for Acute Respiratory Infections in Japan',
       desc: '筆頭著者として掲載。UCLA Tsugawa Y氏との国際共同研究。日本の抗菌薬適正使用に関する公衆衛生研究。臨床系四大誌JAMAのオープン誌。',
-      note: 'JAMA Netw Open. 2024;7(10):e2440406', c: C.blueD,
+      note: 'JAMA Netw Open. 2024;7(10):e2440406',
       link: 'https://doi.org/10.1001/jamanetworkopen.2024.40406'
     }, {
-      tag: '東京都医師会 論文大賞', year: '2024',
+      tag: '東京都医師会 論文大賞', year: '2024', logo: 'aoyama/tokyo-med.png',
       title: '医療を再考する——社会的見地と技術革新から。',
       desc: 'このページの冒頭コピーでもあるマニフェスト的論文。社会医学とテクノロジーを統合する視点が公的に評価された。',
-      note: '令和6年度 東京都医師会 論文大賞 優秀賞', c: C.yellow, link: 'https://www.tokyo.med.or.jp/wp-content/uploads/application/pdf/platanus2024.pdf'
+      note: '令和6年度 東京都医師会 論文大賞 優秀賞', link: 'https://www.tokyo.med.or.jp/wp-content/uploads/application/pdf/platanus2024.pdf'
     }, {
-      tag: '世界経済フォーラム C4IRJ', year: '2020–2023',
+      tag: '世界経済フォーラム C4IRJ', year: '2020–2023', logo: 'aoyama/wef.jpeg',
       title: '医療データガバナンス・地域医療DX',
       desc: 'DFFT準拠の医療データ活用フロー開発、ツールキット作成・モデル自治体導入。医療過疎地デマンドバス運行計画（購買×移動データ解析）、医療AI企業インタビュー調査。',
-      note: '国際的政策実装プラットフォームにて産官連携を経験', c: C.green, link: null
+      note: '国際的政策実装プラットフォームにて産官連携を経験', link: null
     }, {
-      tag: '株式会社プレシジョン', year: '2023–2025',
+      tag: '株式会社プレシジョン', year: '2023–2025', logo: 'aoyama/precision.jpg',
       title: '医師国家試験向け医療LLM 研究',
       desc: '研究協力者として、医師国家試験に向けた医療LLMのデータセット構築・学習方法研究に2年間従事。その他にも，AI医療機器のKPI設定等に参画。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
-      note: '医療スタートアップにて民間企業の視点を経験', c: C.orange, link: null
+      note: '医療スタートアップにて民間企業の視点を経験', link: null
     }
   ];
   return (
-    <section id="works" style={{ background: C.gray, padding: isMobile ? '72px 0' : '100px 0' }}>
+    <section id="works" style={{ background: C.bg, padding: isMobile ? '72px 0' : '104px 0' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
-        <Kicker />
-        <h2 data-fade style={{ ...s('clamp(26px,5vw,48px)', 700), letterSpacing: '-0.015em', textAlign: 'center', marginBottom: '12px' }}>Selected Works</h2>
-        <p data-fade style={{ ...s(isMobile ? '16px' : '19px', 300, C.sec), textAlign: 'center', marginBottom: isMobile ? '40px' : '56px' }}>研究・政策・産業をまたぐ主要な実績。</p>
+        <SectionHead jp="主な実績" en="Selected Works" mb="14px" />
+        <p data-fade style={{ ...s(isMobile ? '15px' : '17px', 300, C.sec), textAlign: 'center', marginBottom: isMobile ? '40px' : '56px' }}>研究・政策・産業をまたぐ主要な実績。</p>
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : 'repeat(2,1fr)',
@@ -346,22 +349,25 @@ const Works = () => {
         }}>
           {works.map((w, i) => (
             <div data-fade key={i} style={{
-              background: C.bg, borderRadius: '20px',
-              padding: isMobile ? '28px 24px' : '40px 36px',
+              background: C.bg, borderRadius: '12px',
+              padding: isMobile ? '26px 22px' : '36px 32px',
               border: `1px solid ${C.border}`, cursor: 'default',
-              transition: 'transform .3s, box-shadow .3s'
+              transition: 'transform .3s, box-shadow .3s, border-color .3s'
             }}
-              onMouseEnter={e => { if (!isMobile) { e.currentTarget.style.transform = 'scale(1.018)'; e.currentTarget.style.boxShadow = '0 8px 28px rgba(0,0,0,0.08)'; } }}
-              onMouseLeave={e => { if (!isMobile) { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = 'none'; } }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', gap: '8px', flexWrap: 'wrap' }}>
-                <span style={{ ...s('11px', 600, 'var(--accent)'), background: 'color-mix(in srgb, var(--accent) 12%, transparent)', padding: '4px 10px', borderRadius: '4px', letterSpacing: '.04em' }}>{w.tag}</span>
-                <span style={{ ...s('12px', 400, C.sec) }}>{w.year}</span>
+              onMouseEnter={e => { if (!isMobile) { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 12px 30px rgba(46,44,126,0.10)'; e.currentTarget.style.borderColor = 'rgba(46,44,126,0.2)'; } }}
+              onMouseLeave={e => { if (!isMobile) { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = C.border; } }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', gap: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-start' }}>
+                  <span style={{ ...s('11px', 600, C.navy), background: 'rgba(46,44,126,0.08)', padding: '4px 10px', borderRadius: '4px', letterSpacing: '.02em' }}>{w.tag}</span>
+                  <span style={{ ...s('12px', 400, C.tert) }}>{w.year}</span>
+                </div>
+                {w.logo && <img src={w.logo} alt="" style={{ height: '26px', width: 'auto', maxWidth: '96px', objectFit: 'contain', filter: 'grayscale(1)', opacity: .55, flexShrink: 0 }} />}
               </div>
-              <h3 style={{ ...s(isMobile ? '16px' : '17px', 700), letterSpacing: '-0.01em', lineHeight: 1.4, marginBottom: '12px' }}>{w.title}</h3>
-              <p style={{ ...s(isMobile ? '13px' : '14px', 300, C.sec), lineHeight: 1.8, marginBottom: '16px' }}>{w.desc}</p>
+              <h3 style={{ ...s(isMobile ? '16px' : '17px', 700, C.text), letterSpacing: '-0.01em', lineHeight: 1.45, marginBottom: '12px' }}>{w.title}</h3>
+              <p style={{ ...s(isMobile ? '13px' : '14px', 300, C.sec), lineHeight: 1.85, marginBottom: '16px' }}>{w.desc}</p>
               <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <p style={{ ...s('12px', 400, C.sec) }}>{w.note}</p>
-                {w.link && <a href={w.link} target="_blank" rel="noreferrer" style={{ ...s('12px', 500, 'var(--accent)'), textDecoration: 'none', whiteSpace: 'nowrap' }}>DOI →</a>}
+                <p style={{ ...s('12px', 400, C.tert) }}>{w.note}</p>
+                {w.link && <a href={w.link} target="_blank" rel="noreferrer" style={{ ...s('12px', 600, C.navy), textDecoration: 'none', whiteSpace: 'nowrap' }}>DOI →</a>}
               </div>
             </div>
           ))}
@@ -371,39 +377,94 @@ const Works = () => {
   );
 };
 
-/* ── TIMELINE ── */
-const Timeline = () => {
+/* ── LOGO STRIP ── (関わってきた組織) */
+const LogoStrip = () => {
   const isMobile = useIsMobile();
-  const items = [
-    { y: '2020.11 – 2023.07', t1: '世界経済フォーラム 日本センター（C4IRJ）', t2: '医療データガバナンス・地域医療DX', cur: false },
-    { y: '2023.04 – 2025.03', t1: '株式会社プレシジョン 研究協力者', t2: '医師国家試験向け医療LLM研究', cur: false },
-    { y: '2023.08 – ', t1: 'University of California,Los Angeles PQI-Lab Research Assistant', cur: false },
-    { y: '2023.10 – 2025.03', t1: '東京大学大学院医学系研究科 臨床疫学・経済学 特任研究員', cur: false },
-    { y: '現在', t1: '初期臨床研修医', t2: '国立国際医療センター（JIHS）', cur: true },
-    { y: '現在', t1: 'Anatom-AI Co-founder', t2: '自然言語×3D解剖学アトラスの開発・事業推進', cur: true },
+  const logos = [
+    { src: 'aoyama/utokyo.jpg', alt: 'The University of Tokyo', h: 36 },
+    { src: 'aoyama/wef.jpeg', alt: 'World Economic Forum', h: 46 },
+    { src: 'aoyama/precision.jpg', alt: 'Precision', h: 30 },
+    { src: 'aoyama/jihs.png', alt: 'Japan Institute for Health Security', h: 42 },
   ];
   return (
-    <section id="timeline" style={{ background: C.bg, padding: isMobile ? '72px 0' : '100px 0' }}>
-      <div style={{ maxWidth: '760px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
-        <Kicker />
-        <h2 data-fade style={{ ...s('clamp(26px,5vw,48px)', 700), letterSpacing: '-0.015em', textAlign: 'center', marginBottom: isMobile ? '40px' : '56px' }}>経歴</h2>
-        {items.map((item, i) => (
-          <div data-fade key={i} style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : '168px 1fr',
-            gap: isMobile ? '6px' : '24px',
-            padding: isMobile ? '18px 0' : '22px 0',
-            borderBottom: `1px solid ${C.border}`
-          }}>
-            <span style={{ ...s('12px', item.cur ? 700 : 400, item.cur ? 'var(--accent)' : C.sec), paddingTop: '3px', lineHeight: 1.55, letterSpacing: '-.005em' }}>{item.y}</span>
-            <div>
-              <p style={{ ...s(isMobile ? '15px' : '17px', item.cur ? 700 : 500), marginBottom: '4px', letterSpacing: '-.005em', lineHeight: 1.5 }}>{item.t1}</p>
-              <p style={{ ...s('13px', 300, C.sec) }}>{item.t2}</p>
+    <section style={{ background: C.bg, padding: isMobile ? '8px 0 64px' : '8px 0 88px', borderTop: `1px solid ${C.border}` }}>
+      <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '48px 18px 0' : '64px 24px 0' }}>
+        <p data-fade style={{ ...s('11px', 600, C.tert), letterSpacing: '.3em', textTransform: 'uppercase', textAlign: 'center', marginBottom: isMobile ? '28px' : '40px' }}>Affiliations</p>
+        <div data-fade style={{
+          display: 'flex', flexWrap: 'wrap', gap: isMobile ? '32px 40px' : '56px',
+          justifyContent: 'center', alignItems: 'center'
+        }}>
+          {logos.map((l, i) => (
+            <img key={i} src={l.src} alt={l.alt} title={l.alt}
+              style={{ height: `${isMobile ? Math.round(l.h * 0.82) : l.h}px`, width: 'auto', objectFit: 'contain', filter: 'grayscale(1)', opacity: .55, transition: 'filter .3s, opacity .3s' }}
+              onMouseEnter={e => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.opacity = '1'; }}
+              onMouseLeave={e => { e.currentTarget.style.filter = 'grayscale(1)'; e.currentTarget.style.opacity = '.55'; }} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── FLOW TIMELINE ── (横軸フロー型インフォグラフィック) */
+const TL_NODES = [
+  { date: '2020.11', org: 'World Economic Forum', role: '日本センター C4IRJ ／ 医療データガバナンス・地域医療DX', logo: 'aoyama/wef.jpeg', lh: 20 },
+  { date: '2023.04', org: '株式会社プレシジョン', role: '研究協力者 ／ 医師国家試験向け医療LLM研究', logo: 'aoyama/precision.jpg', lh: 15 },
+  { date: '2023.08', org: 'UCLA　PQI-Lab', role: 'Research Assistant', logo: null },
+  { date: '2023.10', org: '東京大学大学院', role: '臨床疫学・経済学 特任研究員', logo: 'aoyama/utokyo.jpg', lh: 22 },
+  { date: '2025.04', org: '初期臨床研修医', role: '国立国際医療センター（JIHS）', logo: 'aoyama/jihs.png', lh: 20, cur: true },
+  { date: '現在', org: 'Anatom-AI', role: 'Co-founder ／ 開発・事業推進', logo: null, cur: true },
+];
+
+const FlowCard = ({ n }) => (
+  <div style={{ background: '#fff', border: `1px solid ${n.cur ? 'rgba(46,44,126,0.35)' : C.border}`, borderRadius: '10px', padding: '13px 15px', boxShadow: '0 6px 18px rgba(0,0,0,0.07)', textAlign: 'left' }}>
+    {n.logo && <img src={n.logo} alt="" style={{ height: `${n.lh || 18}px`, width: 'auto', maxWidth: '80px', objectFit: 'contain', filter: 'grayscale(1)', opacity: .7, display: 'block', marginBottom: '9px' }} />}
+    <p style={{ ...s('13.5px', 700, C.navy), lineHeight: 1.35, marginBottom: '5px' }}>{n.org}</p>
+    <p style={{ ...s('11.5px', 400, C.sec), lineHeight: 1.55 }}>{n.role}</p>
+  </div>
+);
+
+const FlowTimeline = () => {
+  const isMobile = useIsMobile(940);
+  if (isMobile) {
+    return (
+      <div data-fade style={{ position: 'relative', paddingLeft: '26px', maxWidth: '520px', margin: '0 auto' }}>
+        <div style={{ position: 'absolute', left: '5px', top: '6px', bottom: '6px', width: '2px', background: '#111' }} />
+        {TL_NODES.map((n, i) => (
+          <div key={i} style={{ position: 'relative', paddingBottom: i === TL_NODES.length - 1 ? 0 : '24px' }}>
+            <div style={{ position: 'absolute', left: '-25.5px', top: '4px', width: '11px', height: '11px', borderRadius: '50%', background: n.cur ? C.navy : '#111', border: '2px solid #fff', boxShadow: `0 0 0 1.5px ${n.cur ? C.navy : '#111'}` }} />
+            <span style={{ ...s('11.5px', 700, n.cur ? '#fff' : C.navy), background: n.cur ? C.navy : 'rgba(46,44,126,0.08)', padding: '3px 11px', borderRadius: '980px', display: 'inline-block', marginBottom: '8px' }}>{n.date}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px' }}>
+              {n.logo && <img src={n.logo} alt="" style={{ height: `${Math.min(n.lh || 16, 18)}px`, width: 'auto', maxWidth: '60px', objectFit: 'contain', filter: 'grayscale(1)', opacity: .7 }} />}
+              <p style={{ ...s('14.5px', 700, C.text), lineHeight: 1.4 }}>{n.org}</p>
             </div>
+            <p style={{ ...s('12.5px', 300, C.sec), lineHeight: 1.55 }}>{n.role}</p>
           </div>
         ))}
       </div>
-    </section>
+    );
+  }
+  return (
+    <div data-fade style={{ overflowX: 'auto', paddingBottom: '10px' }}>
+      <div style={{ position: 'relative', display: 'flex', minWidth: '1120px', height: '440px' }}>
+        <div style={{ position: 'absolute', top: '220px', left: '24px', right: '46px', height: '2px', background: '#111' }} />
+        <div style={{ position: 'absolute', top: '213px', right: '24px', width: 0, height: 0, borderTop: '8px solid transparent', borderBottom: '8px solid transparent', borderLeft: '15px solid #111' }} />
+        {TL_NODES.map((n, i) => {
+          const above = i % 2 === 0;
+          return (
+            <div key={i} style={{ position: 'relative', flex: '1 0 0', minWidth: '180px', height: '440px' }}>
+              <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: '178px', ...(above ? { bottom: '272px' } : { top: '272px' }) }}>
+                <FlowCard n={n} />
+              </div>
+              <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', width: 0, borderLeft: `1.5px dashed ${n.cur ? 'rgba(46,44,126,0.5)' : '#B4B8C4'}`, ...(above ? { top: '168px', height: '39px' } : { top: '233px', height: '39px' }) }} />
+              <div style={{ position: 'absolute', left: '50%', top: '220px', transform: 'translate(-50%,-50%)', zIndex: 2, background: n.cur ? C.navy : '#fff', border: `1.5px solid ${n.cur ? C.navy : '#111'}`, borderRadius: '980px', padding: '5px 14px', whiteSpace: 'nowrap' }}>
+                <span style={{ ...s('12.5px', 700, n.cur ? '#fff' : '#111'), letterSpacing: '.01em' }}>{n.date}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
@@ -425,49 +486,49 @@ const Academic = () => {
     { y: '2022', t: '学生ハッカソン 準優勝' },
   ];
   return (
-    <section style={{ background: C.gray, padding: isMobile ? '72px 0' : '100px 0' }}>
+    <section style={{ background: C.bg, padding: isMobile ? '72px 0' : '104px 0' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
-        <Kicker />
+        <SectionHead jp="論文・受賞" en="Publications & Awards" mb={isMobile ? '44px' : '60px'} />
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           gap: isMobile ? '56px' : '72px'
         }}>
           <div>
-            <h2 data-fade style={{ ...s('clamp(22px,4.5vw,36px)', 700), letterSpacing: '-0.012em', marginBottom: isMobile ? '24px' : '32px' }}>論文・発表</h2>
-            <div data-fade style={{ padding: '24px 0', borderBottom: `1px solid ${C.border}`, marginBottom: '8px' }}>
-              <span style={{ ...s('12px', 600, 'var(--accent)') }}>査読付き原著論文</span>
-              <p style={{ ...s(isMobile ? '14px' : '15px', 700), margin: '8px 0 5px', lineHeight: 1.5, letterSpacing: '-.005em' }}>
+            <h3 data-fade style={{ ...s('clamp(19px,4vw,26px)', 700, C.navy), letterSpacing: '-0.01em', marginBottom: isMobile ? '20px' : '28px' }}>論文・発表</h3>
+            <div data-fade style={{ padding: '20px 0', borderBottom: `1px solid ${C.border}`, marginBottom: '8px' }}>
+              <span style={{ ...s('12px', 600, C.navy) }}>査読付き原著論文</span>
+              <p style={{ ...s(isMobile ? '14px' : '15px', 700, C.text), margin: '8px 0 5px', lineHeight: 1.5, letterSpacing: '-.005em' }}>
                 Clinic Characteristics and Antibiotic Prescribing for Acute Respiratory Infections in Japan
               </p>
               <p style={{ ...s('13px', 300, C.sec), lineHeight: 1.6, marginBottom: '4px' }}>
-                <strong style={{ fontWeight: 500 }}>Aoyama R</strong>, Tsugawa Y (UCLA), Ishikane M, Kitajima K, Sato D, Miyawaki A.
+                <strong style={{ fontWeight: 500, color: C.text }}>Aoyama R</strong>, Tsugawa Y (UCLA), Ishikane M, Kitajima K, Sato D, Miyawaki A.
               </p>
               <p style={{ ...s('13px', 300, C.sec) }}>JAMA Network Open. 2024;7(10):e2440406.</p>
               <a href="https://doi.org/10.1001/jamanetworkopen.2024.40406" target="_blank" rel="noreferrer"
-                style={{ ...s('12px', 500, 'var(--accent)'), textDecoration: 'none', display: 'inline-block', marginTop: '6px', wordBreak: 'break-all' }}>
+                style={{ ...s('12px', 600, C.navy), textDecoration: 'none', display: 'inline-block', marginTop: '6px', wordBreak: 'break-all' }}>
                 DOI: 10.1001/jamanetworkopen.2024.40406 →
               </a>
             </div>
             <div data-fade style={{ padding: '20px 0', borderBottom: `1px solid ${C.border}`, marginBottom: '8px' }}>
-              <span style={{ ...s('12px', 600, 'var(--accent)') }}>受賞論文</span>
-              <p style={{ ...s(isMobile ? '14px' : '15px', 500), margin: '6px 0 5px', lineHeight: 1.5 }}>医療を再考する——社会的見地と技術革新から。</p>
+              <span style={{ ...s('12px', 600, C.navy) }}>受賞論文</span>
+              <p style={{ ...s(isMobile ? '14px' : '15px', 500, C.text), margin: '6px 0 5px', lineHeight: 1.5 }}>医療を再考する——社会的見地と技術革新から。</p>
               <p style={{ ...s('13px', 300, C.sec) }}>令和6年度 東京都医師会 論文大賞 優秀賞</p>
             </div>
-            <h3 data-fade style={{ ...s('11px', 600, C.sec), letterSpacing: '.07em', margin: '24px 0 12px', textTransform: 'uppercase' }}>学会発表</h3>
+            <h4 data-fade style={{ ...s('11px', 600, C.tert), letterSpacing: '.07em', margin: '24px 0 12px', textTransform: 'uppercase' }}>学会発表</h4>
             {presentations.map((p, i) => (
-              <p data-fade key={i} style={{ ...s('13px', 300), lineHeight: 1.7, padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>{p}</p>
+              <p data-fade key={i} style={{ ...s('13px', 300, C.text), lineHeight: 1.7, padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>{p}</p>
             ))}
-            <p data-fade style={{ ...s('13px', 300), lineHeight: 1.7, padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>
+            <p data-fade style={{ ...s('13px', 300, C.text), lineHeight: 1.7, padding: '9px 0', borderBottom: `1px solid ${C.border}` }}>
               査読歴：<em>Annals of Internal Medicine</em>
             </p>
           </div>
           <div>
-            <h2 data-fade style={{ ...s('clamp(22px,4.5vw,36px)', 700), letterSpacing: '-0.012em', marginBottom: isMobile ? '24px' : '32px' }}>受賞・資格</h2>
+            <h3 data-fade style={{ ...s('clamp(19px,4vw,26px)', 700, C.navy), letterSpacing: '-0.01em', marginBottom: isMobile ? '20px' : '28px' }}>受賞・資格</h3>
             {awards.map((a, i) => (
-              <div data-fade key={i} style={{ display: 'grid', gridTemplateColumns: '44px 1fr', gap: '16px', padding: '16px 0', borderBottom: `1px solid ${C.border}` }}>
-                <span style={{ ...s('12px', 500, 'var(--accent)'), paddingTop: '2px' }}>{a.y}</span>
-                <p style={{ ...s(isMobile ? '14px' : '15px', 500), lineHeight: 1.5 }}>{a.t}</p>
+              <div data-fade key={i} style={{ display: 'grid', gridTemplateColumns: '48px 1fr', gap: '16px', padding: '16px 0', borderBottom: `1px solid ${C.border}` }}>
+                <span style={{ ...s('12px', 600, C.navy), paddingTop: '2px' }}>{a.y}</span>
+                <p style={{ ...s(isMobile ? '14px' : '15px', 500, C.text), lineHeight: 1.5 }}>{a.t}</p>
               </div>
             ))}
           </div>
@@ -477,60 +538,86 @@ const Academic = () => {
   );
 };
 
-/* ── CONTACT ── */
-const Contact = () => {
+/* ── PURPOSE ── (プレシジョン式・引用＋写真) */
+const Purpose = () => {
   const isMobile = useIsMobile();
   return (
-    <section id="contact" style={{ background: '#000', padding: isMobile ? '80px 18px' : '120px 24px', textAlign: 'center', borderTop: '0.5px solid rgba(255,255,255,0.07)', position: 'relative', overflow: 'hidden' }}>
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        background: 'radial-gradient(ellipse 60% 60% at 50% 100%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%)'
-      }} />
-      <div data-fade style={{ maxWidth: '600px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '18px' }}>
-          <span style={{ width: '32px', height: '2px', borderRadius: '2px', background: 'var(--accent)' }} />
-        </div>
-        <h2 style={{ ...s('clamp(28px,7vw,60px)', 700, '#fff'), letterSpacing: '-0.022em', lineHeight: 1.12, marginBottom: '20px' }}>
-          Contact
-        </h2>
-        <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.sec), lineHeight: 1.7, marginBottom: isMobile ? '32px' : '40px' }}>
-          投資・共同研究・お問い合わせ、お気軽にご連絡ください。
-        </p>
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <a href="mailto:ryuhei.aoyama@quadka.com"
-            style={{ background: 'var(--accent)', borderRadius: '980px', padding: isMobile ? '13px 24px' : '15px 30px', ...s(isMobile ? '14px' : '15px', 500, '#fff'), textDecoration: 'none', transition: 'filter .2s, transform .2s' }}
-            onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.12)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = 'none'; }}>
-            E-mail
-          </a>
-          <a href="https://www.facebook.com/share/1AxGKqnFcZ/?mibextid=wwXIfr" target="_blank" rel="noreferrer" style={{
-            background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '980px',
-            padding: isMobile ? '13px 18px' : '15px 20px', textDecoration: 'none', ...s(isMobile ? '13px' : '14px', 400, '#fff'), transition: 'border-color .2s', display: 'inline-flex', alignItems: 'center'
-          }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.5)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'}>Meta (Facebook)</a>
+    <section style={{ background: C.light, padding: isMobile ? '72px 0' : '104px 0' }}>
+      <div style={{ maxWidth: '1040px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
+        <SectionHead jp="パーパス" en="Purpose" mb={isMobile ? '40px' : '56px'} />
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 0.85fr',
+          gap: isMobile ? '32px' : '56px', alignItems: 'center'
+        }}>
+          <div data-fade>
+            <div style={{ ...s('clamp(40px,7vw,72px)', 700, 'rgba(46,44,126,0.18)'), fontFamily: SERIF, lineHeight: 0.6, marginBottom: '10px' }}>“</div>
+            <h3 style={{ ...s('clamp(22px,3.6vw,32px)', 700, C.navy), fontFamily: SERIF, lineHeight: 1.5, letterSpacing: '.02em', marginBottom: '20px' }}>
+              医療を再考する——<br />社会的見地と技術革新から。
+            </h3>
+            <p style={{ ...s(isMobile ? '14px' : '15px', 300, C.sec), lineHeight: 1.9, marginBottom: '24px' }}>
+              政策・公衆衛生・テクノロジー。三つの視座から医療を捉え直すこと。これは東京都医師会 論文大賞で評価されたマニフェストであり、Anatom-AIをはじめとする活動すべての起点である。臨床の現場と、社会・技術の最前線。その両方に立ち続けることで、医療の「こうありたい」を形にしていく。
+            </p>
+            <div style={{ borderTop: `1px solid rgba(46,44,126,0.2)`, paddingTop: '14px' }}>
+              <p style={{ ...s('12px', 400, C.tert), marginBottom: '2px' }}>医師・Anatom-AI Co-founder</p>
+              <p style={{ ...s('15px', 700, C.navy), fontFamily: SERIF, letterSpacing: '.04em' }}>青山 龍平 — Ryuhei Aoyama</p>
+            </div>
+          </div>
+          <div data-fade style={{ order: isMobile ? -1 : 0 }}>
+            <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 12px 36px rgba(46,44,126,0.14)', aspectRatio: isMobile ? '4 / 3' : '3 / 4' }}>
+              <img src="aoyama/anatomai-web.jpg" alt="Google Cloud Japan Agentic AI Hackathon にて登壇する青山龍平（左端）"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '30% center', display: 'block' }} />
+            </div>
+            <p style={{ ...s('11.5px', 400, C.tert), lineHeight: 1.6, marginTop: '10px', textAlign: isMobile ? 'center' : 'left' }}>
+              Google Cloud Japan Agentic AI Hackathon 最優秀賞 受賞時の登壇（左端）
+            </p>
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
-/* ── FOOTER ── */
+/* ── CONTACT ── (白帯) */
+const Contact = () => {
+  const isMobile = useIsMobile();
+  return (
+    <section id="contact" style={{ background: C.bg, padding: isMobile ? '80px 18px' : '112px 24px', textAlign: 'center' }}>
+      <div data-fade style={{ maxWidth: '640px', margin: '0 auto' }}>
+        <SectionHead jp="お問い合わせ" en="Contact" mb="20px" />
+        <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.sec), lineHeight: 1.8, marginBottom: isMobile ? '32px' : '40px' }}>
+          お気軽にご連絡ください。
+        </p>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Pill href="mailto:ryuhei.aoyama@quadka.com" filled>E-mailを送る</Pill>
+          <a href="https://www.facebook.com/share/1AxGKqnFcZ/?mibextid=wwXIfr" target="_blank" rel="noreferrer" style={{
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+            background: 'transparent', border: `1px solid rgba(46,44,126,0.35)`, borderRadius: '980px',
+            padding: '13px 24px', textDecoration: 'none', ...s(isMobile ? '13px' : '14px', 500, C.navy), transition: 'border-color .2s, background .2s'
+          }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = C.navy; e.currentTarget.style.background = 'rgba(46,44,126,0.05)'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(46,44,126,0.35)'; e.currentTarget.style.background = 'transparent'; }}>Meta (Facebook)</a>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ── FOOTER ── (紺ベタ) */
 const Footer = () => {
   const isMobile = useIsMobile();
   return (
     <footer style={{
-      background: '#000',
-      padding: isMobile ? '20px 18px 28px' : '16px 24px 28px',
-      borderTop: '0.5px solid rgba(255,255,255,0.07)',
+      background: C.navy,
+      padding: isMobile ? '32px 18px' : '40px 32px',
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
       justifyContent: 'space-between',
       alignItems: isMobile ? 'flex-start' : 'center',
-      flexWrap: 'wrap', gap: isMobile ? '6px' : '8px'
+      flexWrap: 'wrap', gap: isMobile ? '10px' : '8px'
     }}>
-      <span style={{ ...s('13px', 500, '#6E6E73') }}>Ryuhei Aoyama / 青山 龍平 · Moore</span>
-      <span style={{ ...s(isMobile ? '11px' : '12px', 300, '#3A3A3C') }}>Copyright © 2026 Ryuhei Aoyama. All rights reserved.</span>
+      <span style={{ ...s('16px', 700, '#fff'), fontFamily: SERIF, letterSpacing: '.05em' }}>Ryuhei Aoyama / 青山 龍平</span>
+      <span style={{ ...s(isMobile ? '11px' : '12px', 300, 'rgba(255,255,255,0.55)') }}>Copyright © 2026 Ryuhei Aoyama. All rights reserved.</span>
     </footer>
   );
 };
@@ -540,7 +627,7 @@ const App = () => {
   useFade();
   return (
     <div>
-      <Nav /><Hero /><About /><AnatomAI /><Works /><Timeline /><Academic /><Contact /><Footer />
+      <Nav /><Hero /><About /><AnatomAI /><Works /><LogoStrip /><Academic /><Purpose /><Contact /><Footer />
     </div>
   );
 };
