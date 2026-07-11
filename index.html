@@ -223,7 +223,7 @@ const Hero = () => {
 const About = () => {
   const isMobile = useIsMobile();
   return (
-    <section id="about" style={{ background: C.bg, padding: isMobile ? '72px 0' : '104px 0' }}>
+    <section id="about" style={{ background: C.bg, padding: isMobile ? '72px 0 24px' : '104px 0 36px' }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
         <SectionHead jp="プロフィール" en="About" mb={isMobile ? '40px' : '56px'} />
         <div style={{
@@ -233,14 +233,17 @@ const About = () => {
         }}>
           <div data-fade style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.text), lineHeight: 1.85 }}>
-              医師として臨床現場に立ちながら、自然言語で3D解剖学アトラスを操作するAI——Anatom-AIを共同創業。<br />
-              東京大学在学中から世界経済フォーラム（WEF）日本センターにて、医療データガバナンスと地域医療課題に約2年9ヶ月従事し、国際的な政策実装の現場を経験した。また，東京大学の臨床疫学・経済学教室では，特任研究員として，臨床系四大国際誌の一つであるJAMA誌のopen access誌に筆頭著者で論文を発表。同年，東京都医師会の論文大賞でも優秀賞を受賞した。
+              臨床・研究・政策・実装。医療を動かす四つの現場を往復する。<br />
+              現在は初期臨床研修医として臨床力の研鑽を積みながら、自然言語で3D解剖学アトラスを操作するAI「Anatom-AI」を共同創業。現場で感じる医療の課題を、論文や政策提言の形で発信し、さらにプロダクトとして現場に還元するエコシステム構築を目指している。
             </p>
             <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.text), lineHeight: 1.85 }}>
-              技術面においては，医療AI企業・株式会社プレシジョンで、研究協力者として医師国家試験向け医療LLMの研究に2年間携わった経験がある。LLMについての知見を日々集めている。
+              出発点は、医療を「社会の仕組み」として捉える視点だった。東京大学医学部在学中，世界経済フォーラム（WEF）日本センターに参画する機会に恵まれた。約2年9ヶ月の活動では，医療データ活用に関する国際的な政策決定の場から，地域に根ざした病院を中心としたインフラ整備まで，広く社会を診る視点を培った。大学院の臨床疫学・経済学教室では特任研究員として、臨床四大誌のJAMAのオープンアクセス誌に筆頭著者として論文を発表。また同年、医学×テクノロジーのテーマで東京都医師会論文賞優秀賞を受賞した。
             </p>
             <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.text), lineHeight: 1.85 }}>
-              実は趣味として，小説執筆・ワイン・ゲームデザインなどにも領域横断的な好奇心を持つ。
+              この視点を形にするための技術は、現場で積んだ。医療AI企業・株式会社プレシジョンでは研究協力者として、医師国家試験に挑む医療LLMのデータセット構築と学習手法の研究に2年間従事。あわせて、AI医療機器を医療現場で活用するためのKPI策定にも携わった。モデルをつくり、臨床で実際に機能するかを見極めること。その両者の経験が、Anatom-AIにも直結している。
+            </p>
+            <p style={{ ...s(isMobile ? '15px' : '17px', 300, C.text), lineHeight: 1.85 }}>
+              臨床の実感、社会の構造、技術の可能性。どれか一つだけでは、医療は変わらない。好奇心の炎を絶やさず、多くの方と協働したいと考えている。余白では小説を書き、ワインとゲームデザインに凝る。領域を横断する好奇心は、おそらくその延長にある。
             </p>
           </div>
           <div data-fade>
@@ -270,22 +273,35 @@ const About = () => {
   );
 };
 
-/* ── ANATOM-AI ── (薄青灰帯) */
+/* ── ANATOM-AI ── (黒帯・プロダクト画面を背景に) */
 const AnatomAI = () => {
   const isMobile = useIsMobile();
   return (
-    <section id="anatom" style={{ background: C.light, padding: isMobile ? '72px 0' : '104px 0', position: 'relative' }}>
+    <section id="anatom" style={{ background: '#05060E', padding: isMobile ? '72px 0' : '104px 0', position: 'relative', overflow: 'hidden' }}>
+      {/* 背景：プロダクト画面（上端をセクション上端に揃える） */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        backgroundImage: 'url(aoyama/anatom-bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: isMobile ? '72% top' : 'center top',
+        opacity: .9
+      }} />
+      {/* スクリム：文字の可読性を確保する最小限の沈め */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        background: 'radial-gradient(ellipse 85% 75% at 50% 48%, rgba(5,6,14,0.30) 0%, rgba(5,6,14,0.48) 55%, rgba(5,6,14,0.72) 100%)'
+      }} />
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px', position: 'relative', zIndex: 1 }}>
         <div data-fade style={{ display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap' }}>
-          <span style={{ ...s('11px', 600, C.navy), letterSpacing: '.3em', textTransform: 'uppercase' }}>現在の事業</span>
-          <span style={{ ...s('11px', 400, C.tert) }}>・</span>
-          <span style={{ ...s('11px', 500, C.navy), border: `1px solid rgba(46,44,126,0.3)`, borderRadius: '4px', padding: '3px 10px' }}>特許出願中</span>
+          <span style={{ ...s('11px', 600, 'rgba(255,255,255,0.72)'), letterSpacing: '.3em', textTransform: 'uppercase' }}>現在の事業</span>
+          <span style={{ ...s('11px', 400, 'rgba(255,255,255,0.35)') }}>・</span>
+          <span style={{ ...s('11px', 500, '#B3B0F5'), border: '1px solid rgba(179,176,245,0.4)', borderRadius: '4px', padding: '3px 10px' }}>特許出願中</span>
         </div>
-        <h2 data-fade style={{ ...s('clamp(34px,8vw,74px)', 700, C.navy), letterSpacing: '-0.02em', textAlign: 'center', lineHeight: 1.05, marginBottom: '18px' }}>Anatom-AI</h2>
-        <p data-fade style={{ ...s('clamp(17px,2.5vw,25px)', 500, C.text), textAlign: 'center', maxWidth: '580px', margin: '0 auto 16px', lineHeight: 1.5, padding: '0 8px' }}>
+        <h2 data-fade style={{ ...s('clamp(34px,8vw,74px)', 700, '#FFFFFF'), letterSpacing: '-0.02em', textAlign: 'center', lineHeight: 1.05, marginBottom: '18px' }}>Anatom-AI</h2>
+        <p data-fade style={{ ...s('clamp(17px,2.5vw,25px)', 500, '#FFFFFF'), textAlign: 'center', maxWidth: '580px', margin: '0 auto 16px', lineHeight: 1.5, padding: '0 8px' }}>
           自然言語で操作する3D解剖学アトラス
         </p>
-        <p data-fade style={{ ...s(isMobile ? '14px' : '15px', 300, C.sec), textAlign: 'center', maxWidth: '600px', margin: isMobile ? '0 auto 44px' : '0 auto 56px', lineHeight: 1.85, padding: '0 8px' }}>
+        <p data-fade style={{ ...s(isMobile ? '14px' : '15px', 300, 'rgba(255,255,255,0.66)'), textAlign: 'center', maxWidth: '600px', margin: isMobile ? '0 auto 44px' : '0 auto 56px', lineHeight: 1.85, padding: '0 8px' }}>
           「自然言語 → LLMエージェント → 3D解剖モデル操作」という独自アーキテクチャで、医学教育の体験を根本から変える。
         </p>
         <div data-fade style={{
@@ -298,7 +314,7 @@ const AnatomAI = () => {
             { label: '創業チーム', val: '4名体制', sub: '' },
             { label: '知的財産', val: '特許出願中', sub: '自然言語→3D操作アーキテクチャ' },
           ].map((item, i) => (
-            <div key={i} style={{ background: '#fff', padding: isMobile ? '26px 22px' : '32px 26px', borderTop: `3px solid ${C.navy}`, borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+            <div key={i} style={{ background: '#fff', padding: isMobile ? '26px 22px' : '32px 26px', borderTop: `3px solid ${C.navy}`, borderRadius: '8px', boxShadow: '0 10px 34px rgba(0,0,0,0.42)' }}>
               <p style={{ ...s('12px', 500, C.sec), lineHeight: 1.6, whiteSpace: 'pre-line', marginBottom: '14px' }}>{item.label}</p>
               <p style={{ ...s(isMobile ? '20px' : '22px', 700, C.navy), letterSpacing: '-0.01em', marginBottom: item.sub ? '6px' : 0 }}>{item.val}</p>
               {item.sub && <p style={{ ...s('12px', 400, C.tert) }}>{item.sub}</p>}
@@ -324,16 +340,18 @@ const Works = () => {
       tag: '東京都医師会 論文大賞', year: '2024', logo: 'aoyama/tokyo-med.png',
       title: '医療を再考する——社会的見地と技術革新から。',
       desc: 'このページの冒頭コピーでもあるマニフェスト的論文。社会医学とテクノロジーを統合する視点が公的に評価された。',
-      note: '令和6年度 東京都医師会 論文大賞 優秀賞', link: 'https://www.tokyo.med.or.jp/wp-content/uploads/application/pdf/platanus2024.pdf'
+      note: '令和6年度 東京都医師会 論文大賞 優秀賞',
+      link: 'https://www.tokyo.med.or.jp/wp-content/uploads/application/pdf/platanus2024.pdf'
     }, {
       tag: '世界経済フォーラム C4IRJ', year: '2020–2023', logo: 'aoyama/wef.jpeg',
       title: '医療データガバナンス・地域医療DX',
       desc: 'DFFT準拠の医療データ活用フロー開発、ツールキット作成・モデル自治体導入。医療過疎地デマンドバス運行計画（購買×移動データ解析）、医療AI企業インタビュー調査。',
-      note: '国際的政策実装プラットフォームにて産官連携を経験', link: null
+      note: '国際的政策実装プラットフォームにて産官連携を経験',
+      link: 'https://www3.weforum.org/docs/WEF_Five_Years_of_C4IR_Japan_2023.pdf'
     }, {
       tag: '株式会社プレシジョン', year: '2023–2025', logo: 'aoyama/precision.jpg',
       title: '医師国家試験向け医療LLM 研究',
-      desc: '研究協力者として、医師国家試験に向けた医療LLMのデータセット構築・学習方法研究に2年間従事。その他にも，AI医療機器のKPI設定等に参画。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
+      desc: '研究協力者として、医師国家試験に向けた医療LLMのデータセット構築・学習方法研究に2年間従事。AI医療機器のKPI設定等にも参画。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
       note: '医療スタートアップにて民間企業の視点を経験', link: null
     }
   ];
@@ -367,7 +385,7 @@ const Works = () => {
               <p style={{ ...s(isMobile ? '13px' : '14px', 300, C.sec), lineHeight: 1.85, marginBottom: '16px' }}>{w.desc}</p>
               <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <p style={{ ...s('12px', 400, C.tert) }}>{w.note}</p>
-                {w.link && <a href={w.link} target="_blank" rel="noreferrer" style={{ ...s('12px', 600, C.navy), textDecoration: 'none', whiteSpace: 'nowrap' }}>DOI →</a>}
+                {w.link && <a href={w.link} target="_blank" rel="noreferrer" style={{ ...s('12px', 600, C.navy), textDecoration: 'none', whiteSpace: 'nowrap' }}>open →</a>}
               </div>
             </div>
           ))}
@@ -388,18 +406,16 @@ const LogoStrip = () => {
     { src: 'aoyama/jihs.png', alt: 'Japan Institute for Health Security', h: 42 },
   ];
   return (
-    <section style={{ background: C.bg, padding: isMobile ? '8px 0 64px' : '8px 0 88px', borderTop: `1px solid ${C.border}` }}>
-      <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '48px 18px 0' : '64px 24px 0' }}>
-        <p data-fade style={{ ...s('11px', 600, C.tert), letterSpacing: '.3em', textTransform: 'uppercase', textAlign: 'center', marginBottom: isMobile ? '28px' : '40px' }}>Affiliations</p>
+    <section style={{ background: C.bg, padding: isMobile ? '0 0 64px' : '0 0 88px' }}>
+      <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
+        <p data-fade style={{ ...s('11px', 600, C.tert), letterSpacing: '.3em', textTransform: 'uppercase', textAlign: 'center', marginBottom: isMobile ? '22px' : '28px' }}>Affiliations</p>
         <div data-fade style={{
           display: 'flex', flexWrap: 'wrap', gap: isMobile ? '32px 40px' : '56px',
           justifyContent: 'center', alignItems: 'center'
         }}>
           {logos.map((l, i) => (
             <img key={i} src={l.src} alt={l.alt} title={l.alt}
-              style={{ height: `${isMobile ? Math.round(l.h * 0.82) : l.h}px`, width: 'auto', objectFit: 'contain', filter: 'grayscale(1)', opacity: .55, transition: 'filter .3s, opacity .3s' }}
-              onMouseEnter={e => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.opacity = '1'; }}
-              onMouseLeave={e => { e.currentTarget.style.filter = 'grayscale(1)'; e.currentTarget.style.opacity = '.55'; }} />
+              style={{ height: `${isMobile ? Math.round(l.h * 0.82) : l.h}px`, width: 'auto', objectFit: 'contain' }} />
           ))}
         </div>
       </div>
@@ -477,7 +493,7 @@ const Academic = () => {
     '"自然言語処理解析で見るCOVID-19業種別ガイドラインの現状"',
     '"大規模マルチモーダル言語モデルによる認知症の言語症状の再現"',
     'NLP2025（言語処理学会）筆頭著者発表',
-    '研修医1年次，内科地方会を始めとして優秀賞を3度受賞',
+    '研修医1年次、内科地方会を始めとして優秀賞を3度受賞',
   ];
   const awards = [
     { y: '2026', t: 'Google Cloud Japan Agentic AI Hackathon 最優秀賞（880エントリー中1位）' },
@@ -488,7 +504,7 @@ const Academic = () => {
     { y: '2022', t: '学生ハッカソン 準優勝' },
   ];
   return (
-    <section style={{ background: C.bg, padding: isMobile ? '72px 0' : '104px 0' }}>
+    <section style={{ background: C.bg, padding: isMobile ? '72px 0' : '104px 0', borderTop: `1px solid ${C.border}` }}>
       <div style={{ maxWidth: '980px', margin: '0 auto', padding: isMobile ? '0 18px' : '0 24px' }}>
         <SectionHead jp="論文・受賞" en="Publications & Awards" mb={isMobile ? '44px' : '60px'} />
         <div style={{
@@ -558,7 +574,7 @@ const Purpose = () => {
               医療を再考する——<br />社会的見地と技術革新から。
             </h3>
             <p style={{ ...s(isMobile ? '14px' : '15px', 300, C.sec), lineHeight: 1.9, marginBottom: '24px' }}>
-              政策・公衆衛生・テクノロジー。三つの視座から医療を捉え直すこと。これは東京都医師会 論文大賞で評価されたマニフェストであり、Anatom-AIをはじめとする活動すべての起点である。臨床の現場と、社会・技術の最前線。その両方に立ち続けることで、医療の「こうありたい」を形にしていく。
+              政策・公衆衛生・テクノロジー。三つの視座から医療を捉え直すこと。これは東京都医師会 論文大賞で評価されたマニフェストであり、Anatom-AIをはじめとする活動すべての起点である。臨床の現場と、社会・技術の最前線。その両方に立ち続けることで、医療の「こうありたい」を形にする。
             </p>
             <div style={{ borderTop: `1px solid rgba(46,44,126,0.2)`, paddingTop: '14px' }}>
               <p style={{ ...s('12px', 400, C.tert), marginBottom: '2px' }}>医師・Anatom-AI Co-founder</p>
@@ -629,7 +645,7 @@ const App = () => {
   useFade();
   return (
     <div>
-      <Nav /><Hero /><About /><AnatomAI /><Works /><LogoStrip /><Academic /><Purpose /><Contact /><Footer />
+      <Nav /><Hero /><About /><LogoStrip /><AnatomAI /><Works /><Academic /><Purpose /><Contact /><Footer />
     </div>
   );
 };
