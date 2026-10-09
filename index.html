@@ -62,14 +62,12 @@ const useIsMobile = (bp = 760) => {
   return m;
 };
 
-/* **強調** 記法を <strong> に変換（モバイルで要点だけを太く） */
+/* **強調** 記法を <strong> に変換（PC・モバイル共通） */
 const rich = (txt, color) => String(txt).split(/\*\*(.+?)\*\*/g).map((part, i) =>
   i % 2 === 1
     ? <strong key={i} style={{ fontWeight: 700, color: color || C.navy }}>{part}</strong>
     : part
 );
-/* モバイルなら強調付き短縮版、デスクトップなら従来の全文 */
-const pick = (isMobile, full, short, color) => isMobile ? rich(short, color) : full;
 
 /* scroll-reveal */
 const useFade = () => useEffect(() => {
@@ -201,16 +199,16 @@ const Hero = () => {
     transition: `opacity 1s cubic-bezier(.22,.61,.36,1) ${delay}s, transform 1s cubic-bezier(.22,.61,.36,1) ${delay}s`,
   });
   const stats = [
-    ['現在地', '初期臨床研修医（JIHS）', '**初期臨床研修医**（JIHS）'],
-    ['研究領域', '公衆衛生・NLP・計算論的神経科学', '**公衆衛生** / **NLP** / 計算論的神経科学'],
-    ['資格', '医師免許・統計検定1級（最優秀賞）・HSK5級', '**医師免許** / **統計検定1級**（最優秀賞）'],
-    ['言語', '日本語・英語・中国語（CEFR C1）', '日本語 / 英語 / **中国語 C1**'],
+    ['現在地', '**初期臨床研修医**（JIHS）'],
+    ['研究領域', '**公衆衛生**・**NLP**・計算論的神経科学'],
+    ['資格', '**医師免許**・**統計検定1級**（最優秀賞）・HSK5級'],
+    ['言語', '日本語・英語・**中国語**（CEFR C1）'],
   ];
-  const StatItem = ([k, v, mv]) => (
+  const StatItem = ([k, v]) => (
     <div key={k} style={{ textAlign: 'left', borderTop: '1px solid rgba(255,255,255,0.18)', paddingTop: '10px' }}>
       <p style={{ ...s(isMobile ? '10px' : '11px', 600, 'rgba(255,255,255,0.5)'), marginBottom: '5px', letterSpacing: '.08em' }}>{k}</p>
       <p style={{ ...s(isMobile ? '12.5px' : '13px', isMobile ? 400 : 500, 'rgba(255,255,255,0.8)'), lineHeight: 1.55, wordBreak: 'break-word' }}>
-        {isMobile ? rich(mv, '#FFFFFF') : v}
+        {rich(v, '#FFFFFF')}
       </p>
     </div>
   );
@@ -282,43 +280,29 @@ const About = () => {
         <div data-fade style={{ marginBottom: isMobile ? '32px' : '44px' }}>
           <h3 style={{ ...s('clamp(19px,3.6vw,24px)', 500, C.navy), letterSpacing: '.05em', marginBottom: '14px' }}>臨床・研究・政策・実装</h3>
           <p style={{ ...s(isMobile ? '14.5px' : '17px', 300, C.text), lineHeight: isMobile ? 1.75 : 1.85 }}>
-            {pick(isMobile,
-              '医療を動かす四つの現場を往復する。現場で感じる医療の課題を、論文や政策提言の形で発信し、さらにプロダクトとして現場に還元するエコシステム構築を目指している。',
-              '医療を動かす**四つの現場**を往復する。現場で感じた課題を論文と政策提言で発信し、プロダクトとして現場へ還す。')}
+            {rich('医療を動かす**四つの現場**を往復する。現場で感じる医療の課題を、論文や政策提言の形で発信し、さらにプロダクトとして現場に還元する**エコシステム構築**を目指している。')}
           </p>
         </div>
         <div data-fade style={{ display: 'flex', flexDirection: 'column' }}>
           {[
-            ['臨床', '現在は初期臨床研修医として、臨床力の研鑽を積む。日々の診療で得る現場の実感が、研究・政策・実装のすべての起点となっている。',
-              '**初期臨床研修医**として臨床力を研鑽。日々の診療で得る実感が、研究・政策・実装すべての起点になっている。'],
-            ['研究', '大学院の臨床疫学・経済学教室では特任研究員として、臨床四大誌のJAMAのオープンアクセス誌に筆頭著者として論文を発表。また同年、医学×テクノロジーのテーマで東京都医師会論文賞優秀賞を受賞した。',
-              '東大大学院 臨床疫学・経済学教室の**特任研究員**。**JAMA Network Open** に筆頭著者として論文を発表し、同年 **東京都医師会 論文賞 優秀賞** を受賞。'],
-            ['政策', '出発点は、医療を「社会の仕組み」として捉える視点だった。東京大学医学部在学中，世界経済フォーラム（WEF）日本センターに参画する機会に恵まれた。約2年9ヶ月の活動では，医療データ活用に関する国際的な政策決定の場から，地域に根ざした病院を中心としたインフラ整備まで，広く社会を診る視点を培った。',
-              '出発点は、医療を「社会の仕組み」として捉える視点。東大医学部在学中に **世界経済フォーラム（WEF）日本センター** へ参画し、**約2年9ヶ月**、国際的な医療データ政策から地域医療インフラまでを見た。'],
-            ['実装', 'この視点を形にするための技術は、現場で積んだ。医療AI企業・株式会社プレシジョンでは研究協力者として、医師国家試験に挑む医療LLMのデータセット構築と学習手法の研究に2年間従事。あわせて、AI医療機器を医療現場で活用するためのKPI策定にも携わった。モデルをつくり、臨床で実際に機能するかを見極めること。その両者の経験が、自然言語で3D解剖学アトラスを操作するAI「Anatom-AI」の共同創業に直結している。',
-              '技術は現場で積んだ。医療AI企業 **株式会社プレシジョン** で研究協力者として**2年間**、医師国家試験に挑む医療LLMを研究。つくることと臨床で機能させること、その両方の経験が **Anatom-AI** の共同創業に直結している。'],
-          ].map(([k, v, mv]) => (
+            ['臨床', '現在は**初期臨床研修医**として、臨床力の研鑽を積む。日々の診療で得る現場の実感が、研究・政策・実装の**すべての起点**となっている。'],
+            ['研究', '大学院の臨床疫学・経済学教室では**特任研究員**として、臨床四大誌のJAMAのオープンアクセス誌に**筆頭著者**として論文を発表。また同年、医学×テクノロジーのテーマで**東京都医師会論文賞優秀賞**を受賞した。'],
+            ['政策', '出発点は、医療を「社会の仕組み」として捉える視点だった。東京大学医学部在学中，**世界経済フォーラム（WEF）日本センター**に参画する機会に恵まれた。**約2年9ヶ月**の活動では，医療データ活用に関する国際的な政策決定の場から，地域に根ざした病院を中心としたインフラ整備まで，広く社会を診る視点を培った。'],
+            ['実装', 'この視点を形にするための技術は、現場で積んだ。医療AI企業・**株式会社プレシジョン**では研究協力者として、医師国家試験に挑む**医療LLM**のデータセット構築と学習手法の研究に**2年間**従事。あわせて、AI医療機器を医療現場で活用するためのKPI策定にも携わった。モデルをつくり、臨床で実際に機能するかを見極めること。その両者の経験が、自然言語で3D解剖学アトラスを操作するAI「**Anatom-AI**」の共同創業に直結している。'],
+          ].map(([k, v]) => (
             <div key={k} style={{ padding: isMobile ? '18px 0' : '24px 0', borderTop: `1px solid ${C.border}` }}>
               <p style={{ ...s('11.5px', 700, C.navy), marginBottom: '7px', letterSpacing: '.12em' }}>{k}</p>
-              <p style={{ ...s(isMobile ? '14.5px' : '17px', 300, C.text), lineHeight: isMobile ? 1.75 : 1.85 }}>{pick(isMobile, v, mv)}</p>
+              <p style={{ ...s(isMobile ? '14.5px' : '17px', 300, C.text), lineHeight: isMobile ? 1.75 : 1.85 }}>{rich(v)}</p>
             </div>
           ))}
         </div>
         <div data-fade style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: isMobile ? '28px' : '44px', borderTop: `1px solid ${C.border}`, paddingTop: isMobile ? '28px' : '44px' }}>
-          {isMobile ? (
-            <p style={{ ...s('14.5px', 300, C.text), lineHeight: 1.75 }}>
-              {rich('**臨床の実感・社会の構造・技術の可能性**。その共通言語を習得すべく研鑽を積み、好奇心を絶やさず多くの方と協働したい。')}
-            </p>
-          ) : (
-            <>
-              <p style={{ ...s('17px', 300, C.text), lineHeight: 1.85 }}>
-                臨床の実感、社会の構造、技術の可能性。共通言語を習得するべく，日々研鑽を積む。
-              </p>
-              <p style={{ ...s('17px', 300, C.text), lineHeight: 1.85 }}>
-                好奇心の炎を絶やさず、多くの方と協働したいと考えている。
-              </p>
-            </>
-          )}
+          <p style={{ ...s(isMobile ? '14.5px' : '17px', 300, C.text), lineHeight: isMobile ? 1.75 : 1.85 }}>
+            {rich('**臨床の実感、社会の構造、技術の可能性**。共通言語を習得するべく，日々研鑽を積む。')}
+          </p>
+          <p style={{ ...s(isMobile ? '14.5px' : '17px', 300, C.text), lineHeight: isMobile ? 1.75 : 1.85 }}>
+            好奇心の炎を絶やさず、多くの方と協働したいと考えている。
+          </p>
         </div>
       </div>
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: isMobile ? '52px 18px 0' : '92px 24px 0' }}>
@@ -363,10 +347,7 @@ const AnatomAI = () => {
           自然言語で操作する3D解剖学アトラス
         </p>
         <p data-fade style={{ ...s(isMobile ? '13.5px' : '15px', 300, 'rgba(255,255,255,0.68)'), textAlign: 'center', maxWidth: '600px', margin: isMobile ? '0 auto 28px' : '0 auto 56px', lineHeight: isMobile ? 1.75 : 1.85, padding: '0 8px' }}>
-          {pick(isMobile,
-            '「自然言語 → LLMエージェント → 3D解剖モデル操作」という独自アーキテクチャで、医学教育の体験を根本から変える。',
-            '「自然言語 → LLMエージェント → 3D解剖モデル操作」の**独自アーキテクチャ**で、医学教育の体験を根本から変える。',
-            '#FFFFFF')}
+          {rich('「自然言語 → LLMエージェント → 3D解剖モデル操作」という**独自アーキテクチャ**で、医学教育の体験を根本から変える。', '#FFFFFF')}
         </p>
         <div data-fade style={{
           display: 'grid',
@@ -412,29 +393,25 @@ const Works = () => {
     {
       tag: 'JAMA Network Open', year: '2024', logo: 'aoyama/jama.png',
       title: 'Clinic Characteristics and Antibiotic Prescribing for Acute Respiratory Infections in Japan',
-      desc: '筆頭著者として掲載。UCLA Tsugawa Y氏との国際共同研究。日本の抗菌薬適正使用に関する公衆衛生研究。臨床系四大誌JAMAのオープン誌。',
-      mdesc: '**筆頭著者**として掲載。UCLAとの国際共同研究で、日本の**抗菌薬適正使用**を扱った公衆衛生研究。',
+      desc: '**筆頭著者**として掲載。UCLA Tsugawa Y氏との**国際共同研究**。日本の**抗菌薬適正使用**に関する公衆衛生研究。臨床系四大誌JAMAのオープン誌。',
       note: 'JAMA Netw Open. 2024;7(10):e2440406',
       link: 'https://doi.org/10.1001/jamanetworkopen.2024.40406'
     }, {
       tag: '東京都医師会 論文大賞', year: '2024', logo: 'aoyama/tokyo-med.png',
       title: '医療を再考する——社会的見地と技術革新から。',
-      desc: 'このページの冒頭コピーでもあるマニフェスト的論文。社会医学とテクノロジーを統合する視点が公的に評価された。',
-      mdesc: 'マニフェスト的論文。**社会医学 × テクノロジー**の視点が公的に評価された。',
+      desc: 'このページの冒頭コピーでもあるマニフェスト的論文。**社会医学とテクノロジーを統合する視点**が公的に評価された。',
       note: '令和6年度 東京都医師会 論文大賞 優秀賞',
       link: 'https://www.tokyo.med.or.jp/wp-content/uploads/application/pdf/platanus2024.pdf'
     }, {
       tag: '世界経済フォーラム C4IRJ', year: '2020–2023', logo: 'aoyama/wef.jpeg',
       title: '医療データガバナンス・地域医療DX',
-      desc: 'DFFT準拠の医療データ活用フロー開発、ツールキット作成・モデル自治体導入。医療過疎地デマンドバス運行計画（購買×移動データ解析）、医療AI企業インタビュー調査。',
-      mdesc: '**DFFT準拠の医療データ活用フロー**を開発しモデル自治体へ導入。医療過疎地のデマンドバス運行計画も担当。',
+      desc: '**DFFT準拠の医療データ活用フロー**開発、ツールキット作成・**モデル自治体導入**。医療過疎地デマンドバス運行計画（購買×移動データ解析）、医療AI企業インタビュー調査。',
       note: '国際的政策実装プラットフォームにて産官連携を経験',
       link: 'https://www3.weforum.org/docs/WEF_Five_Years_of_C4IR_Japan_2023.pdf'
     }, {
       tag: '株式会社プレシジョン', year: '2023–2025', logo: 'aoyama/precision.jpg',
       title: '医師国家試験向け医療LLM 研究',
-      desc: '研究協力者として、医師国家試験に向けた医療LLMのデータセット構築・学習方法研究に2年間従事。AI医療機器のKPI設定等にも参画。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
-      mdesc: '研究協力者として**2年間**、医師国家試験向け**医療LLM**のデータセット構築・学習手法を研究。AI医療機器のKPI設定にも参画。',
+      desc: '研究協力者として、医師国家試験に向けた**医療LLM**のデータセット構築・学習方法研究に**2年間**従事。AI医療機器のKPI設定等にも参画。Anatom-AIの技術的バックグラウンドと直結する実装経験。',
       note: '医療スタートアップにて民間企業の視点を経験', link: null
     }
   ];
@@ -465,7 +442,7 @@ const Works = () => {
                 {w.logo && <img src={w.logo} alt="" loading="lazy" decoding="async" style={{ height: isMobile ? '22px' : '26px', width: 'auto', maxWidth: '96px', objectFit: 'contain', filter: 'grayscale(1)', opacity: .55, flexShrink: 0 }} />}
               </div>
               <h3 style={{ ...s(isMobile ? '15.5px' : '17px', 700, C.text), letterSpacing: '-0.01em', lineHeight: 1.45, marginBottom: '10px' }}>{w.title}</h3>
-              <p style={{ ...s(isMobile ? '13px' : '14px', 300, C.sec), lineHeight: isMobile ? 1.75 : 1.85, marginBottom: isMobile ? '12px' : '16px' }}>{pick(isMobile, w.desc, w.mdesc)}</p>
+              <p style={{ ...s(isMobile ? '13px' : '14px', 300, C.sec), lineHeight: isMobile ? 1.75 : 1.85, marginBottom: isMobile ? '12px' : '16px' }}>{rich(w.desc)}</p>
               <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                 <p style={{ ...s(isMobile ? '11px' : '12px', 400, C.tert), lineHeight: 1.5 }}>{w.note}</p>
                 {w.link && <a href={w.link} target="_blank" rel="noreferrer" style={{ ...s('12px', 600, C.navy), textDecoration: 'none', whiteSpace: 'nowrap' }}>open →</a>}
@@ -579,12 +556,12 @@ const Academic = () => {
     '研修医1年次、内科地方会を始めとして優秀賞を3度受賞',
   ];
   const awards = [
-    { y: '2026', t: 'Google Cloud Japan Agentic AI Hackathon 最優秀賞（880エントリー中1位）', m: 'Google Cloud Japan Agentic AI Hackathon **最優秀賞**（880エントリー中1位）' },
-    { y: '2025', t: 'HSK5級（中国語検定）', m: '**HSK5級**（中国語検定）' },
-    { y: '2025', t: '医師免許取得', m: '**医師免許**取得' },
-    { y: '2024', t: '東京都医師会 論文大賞 優秀賞（令和6年度）', m: '東京都医師会 論文大賞 **優秀賞**（令和6年度）' },
-    { y: '2023', t: '統計検定1級 医薬生物学分野 最優秀成績賞', m: '**統計検定1級** 医薬生物学分野 **最優秀成績賞**' },
-    { y: '2022', t: '学生ハッカソン 準優勝', m: '学生ハッカソン **準優勝**' },
+    { y: '2026', t: 'Google Cloud Japan Agentic AI Hackathon **最優秀賞**（880エントリー中1位）' },
+    { y: '2025', t: '**HSK5級**（中国語検定）' },
+    { y: '2025', t: '**医師免許**取得' },
+    { y: '2024', t: '東京都医師会 論文大賞 **優秀賞**（令和6年度）' },
+    { y: '2023', t: '**統計検定1級** 医薬生物学分野 **最優秀成績賞**' },
+    { y: '2022', t: '学生ハッカソン **準優勝**' },
   ];
   return (
     <section style={{ background: C.bg, padding: isMobile ? '56px 0' : '104px 0', borderTop: `1px solid ${C.border}` }}>
@@ -629,7 +606,7 @@ const Academic = () => {
             {awards.map((a, i) => (
               <div data-fade key={i} style={{ display: 'grid', gridTemplateColumns: isMobile ? '42px 1fr' : '48px 1fr', gap: isMobile ? '12px' : '16px', padding: isMobile ? '13px 0' : '16px 0', borderBottom: `1px solid ${C.border}` }}>
                 <span style={{ ...s('12px', 700, C.navy), paddingTop: '2px' }}>{a.y}</span>
-                <p style={{ ...s(isMobile ? '13.5px' : '15px', isMobile ? 400 : 500, C.text), lineHeight: 1.6 }}>{pick(isMobile, a.t, a.m)}</p>
+                <p style={{ ...s(isMobile ? '13.5px' : '15px', isMobile ? 400 : 500, C.text), lineHeight: 1.6 }}>{rich(a.t)}</p>
               </div>
             ))}
           </div>
@@ -657,9 +634,7 @@ const Purpose = () => {
               医療を再考する——<br />社会的見地と技術革新から。
             </h3>
             <p style={{ ...s(isMobile ? '14px' : '15px', 300, C.sec), lineHeight: isMobile ? 1.8 : 1.9, marginBottom: isMobile ? '20px' : '24px' }}>
-              {pick(isMobile,
-                '政策・公衆衛生・テクノロジー。三つの視座から医療を捉え直すこと。これは東京都医師会 論文大賞で評価されたマニフェストであり、Anatom-AIをはじめとする活動すべての起点である。臨床の現場と、社会・技術の最前線。その両方に立ち続けることで、医療の「こうありたい」を形にする。',
-                '**政策・公衆衛生・テクノロジー**。三つの視座から医療を捉え直す——東京都医師会 論文大賞で評価されたこのマニフェストが、**活動すべての起点**である。')}
+              {rich('**政策・公衆衛生・テクノロジー**。三つの視座から医療を捉え直すこと。これは東京都医師会 論文大賞で評価されたマニフェストであり、Anatom-AIをはじめとする**活動すべての起点**である。臨床の現場と、社会・技術の最前線。その両方に立ち続けることで、医療の「こうありたい」を形にする。')}
             </p>
             <div style={{ borderTop: `1px solid rgba(46,44,126,0.2)`, paddingTop: '14px' }}>
               <p style={{ ...s('12px', 400, C.tert), marginBottom: '2px' }}>医師・Anatom-AI Co-founder</p>
